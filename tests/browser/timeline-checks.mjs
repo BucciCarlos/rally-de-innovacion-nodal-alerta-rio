@@ -204,6 +204,41 @@ export async function runTimelineChecks(chrome, base) {
       }
       await close(page);
     }
+    // Logotipos: vuelven al inicio en la misma pestaña, con ratón, toque y teclado.
+    const pageCount = async () => (await send('Target.getTargets')).targetInfos.filter((t) => t.type === 'page').length;
+    {
+      const page = await open('/site/');
+      ok('el logotipo público apunta al inicio', await page.eval("new URL(document.querySelector('.pub-brand').href).pathname === '/site/'"));
+      await close(page);
+    }
+    {
+      const page = await open('/site/nodo/');
+      const before = await pageCount();
+      await page.eval("document.querySelector('.apphead__brand').focus()");
+      ok('el logotipo de Modo Nodo recibe foco visible con teclado', await page.eval("document.querySelector('.apphead__brand').matches(':focus-visible')"));
+      await page.call('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, text: '\r' });
+      await page.call('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
+      await waitFor(() => page.eval("location.pathname === '/site/'"), 'Enter en el logotipo lleva al inicio');
+      ok('Enter en el logotipo de Modo Nodo abre el inicio en la misma pestaña', (await pageCount()) === before);
+      await close(page);
+    }
+    for (const [route, selector, width] of [['/site/nodo/', '.apphead__brand', 1440], ['/site/nodo/', '.apphead__brand', 360], ['/site/nodo/', '.brand', 1440], ['/site/operadores/', '.brand', 1440], ['/site/operadores/', '.brand', 360]]) {
+      const page = await open(route);
+      const touch = width < 768;
+      await page.call('Emulation.setDeviceMetricsOverride', { width, height: 900, deviceScaleFactor: 1, mobile: touch });
+      const before = await pageCount();
+      const { x, y } = await page.eval(`(() => { const r = document.querySelector('${selector}').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`);
+      if (touch) {
+        await page.call('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+        await page.call('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      } else {
+        await page.call('Input.dispatchMouseEvent', { type: 'mousePressed', x, y, button: 'left', clickCount: 1 });
+        await page.call('Input.dispatchMouseEvent', { type: 'mouseReleased', x, y, button: 'left', clickCount: 1 });
+      }
+      await waitFor(() => page.eval("location.pathname === '/site/'"), `${selector} de ${route} lleva al inicio a ${width}px`);
+      ok(`${selector} de ${route} lleva al inicio a ${width}px (${touch ? 'toque' : 'ratón'}) sin pestañas nuevas`, (await pageCount()) === before);
+      await close(page);
+    }
     ok('sin errores de consola, excepciones, HTTP 404 ni recursos fallidos en las pestañas reales', issues.length === 0);
     return passed;
   } finally {
