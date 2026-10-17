@@ -15,6 +15,7 @@ export { STATUS_ORDER };
 export { fmtMinutes } from './engine.js';
 
 const DATA_FILES = ['scenario', 'stations', 'levels', 'map'];
+const OPTIONAL_FILES = ['scenery'];   // escenografía visual: si falta, los mapas funcionan igual
 
 /** Carga los JSON de data/. Por defecto resuelve la ruta relativa a este módulo (funciona en cualquier subruta). */
 export async function loadData(base = new URL('../../../data/', import.meta.url)) {
@@ -24,7 +25,11 @@ export async function loadData(base = new URL('../../../data/', import.meta.url)
     if (!res.ok) throw new Error(`No se pudo cargar data/${name}.json (HTTP ${res.status})`);
     return [name, await res.json()];
   }));
-  return Object.fromEntries(entries);
+  const data = Object.fromEntries(entries);
+  for (const name of OPTIONAL_FILES) {
+    try { const res = await fetch(new URL(`${name}.json`, root)); if (res.ok) data[name] = await res.json(); } catch { /* opcional */ }
+  }
+  return data;
 }
 
 /**

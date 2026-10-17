@@ -5,6 +5,7 @@ import { createZones } from './zones.js';
 import { createStations } from './stations.js';
 import { createLandmarks } from './landmarks.js';
 import { nearestShelter } from '../geo.js';
+import { addScenery } from '../../core/scenery.js';
 
 const DESKTOP = '(min-width: 1024px)';
 
@@ -21,6 +22,7 @@ export function createRiverMap(el, sim, { onSelectZone, onSelectStation }) {
   });
 
   addBase(map, data);
+  addScenery(L, map, data.scenery, { detail: 'public' });   // territorio ficticio bajo zonas, río y estaciones
   const zones = createZones(map, data, levels, { onSelect: onSelectZone });
   const river = createRiver(map, data, levels);
   const landmarks = createLandmarks(map, data);

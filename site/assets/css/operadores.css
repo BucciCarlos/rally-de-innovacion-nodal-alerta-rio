@@ -233,3 +233,17 @@ footer { padding: 24px 2px 22px; color: var(--ops-muted); display: flex; gap: 40
 .header-right .public-link + .public-link { margin-left: 10px; }
 @media (max-width: 760px) { .header-right .public-link + .public-link { margin-left: 0; } }
 .net-bus { stroke: var(--ops-line); stroke-width: 2; }
+
+/* ---- Escenografía territorial ficticia (core/scenery.js): apagada y discreta; las estaciones y alertas siguen dominando ---- */
+#river-map .sc-farm { stroke: none; } #river-map .sc-farm--a { fill: #9db982; fill-opacity: .07; } #river-map .sc-farm--b { fill: #a9c28c; fill-opacity: .11; }
+#river-map .sc-forest { fill: #3f8f64; fill-opacity: .2; stroke: #3f8f64; stroke-opacity: .25; stroke-width: 1px; stroke-linejoin: round; }
+#river-map .sc-urban { fill: #8aa8c0; fill-opacity: .1; stroke: #8aa8c0; stroke-opacity: .18; stroke-width: 1px; stroke-linejoin: round; }
+#river-map .sc-riparian { fill: #3a9b6c; fill-opacity: .24; stroke: none; }
+#river-map .sc-park { fill: #4fae7b; fill-opacity: .3; stroke: #4fae7b; stroke-opacity: .5; stroke-width: 1px; }
+#river-map .sc-street { fill: none; stroke: #7894a7; stroke-opacity: .32; stroke-width: 1px; }
+#river-map .sc-track { fill: none; stroke: #7da68a; stroke-opacity: .35; stroke-width: 1px; stroke-dasharray: 2 4; }
+#river-map .sc-road-casing { fill: none; stroke: #0a1822; stroke-opacity: .85; stroke-linecap: round; stroke-linejoin: round; } #river-map .sc-road-casing--sec { stroke-width: 4px; } #river-map .sc-road-casing--main { stroke-width: 7px; }
+#river-map .sc-road { fill: none; stroke-linecap: round; stroke-linejoin: round; } #river-map .sc-road--sec { stroke: #37586c; stroke-width: 2.2px; } #river-map .sc-road--main { stroke: #4f7690; stroke-width: 4px; }
+#river-map .sc-coast { fill: none; stroke: #5d879f; stroke-width: 2.2px; stroke-linecap: round; stroke-opacity: .9; }
+#river-map .sc-bridge-casing { fill: none; stroke: #0a1822; stroke-width: 8px; stroke-linecap: butt; }
+#river-map .sc-bridge { fill: none; stroke: #8db6ca; stroke-width: 4.5px; stroke-linecap: butt; }

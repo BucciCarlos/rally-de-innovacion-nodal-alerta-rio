@@ -27,3 +27,11 @@ Texto prospectivo tras el cruce crítico · `sinceT` nulo en alertas de predicci
 - **Operadores:** «Ver nodo ↗» (otra pestaña) y bloque compacto «Red LoRa · Gateway» + «Sirenas barriales simuladas» dentro de «Salud de la red».
 - **Pública:** sólo marca y un enlace secundario al Modo Nodo en «Cómo funciona». Sin paneles técnicos.
 - **Pruebas:** `validate.mjs` 66/66 (derivados, telemetría determinista, marca); `browser-smoke.mjs` 13/13 con tres vistas sincronizadas; auditoría con tres pestañas reales de Chrome (activar/play/pausa/retroceso/slider/velocidad/recarga, minutos 0–360, E5 sin enlace, E2 batería crítica, sirena activa a t=260), sin errores de consola ni 404, sin desbordes a 360/768/1440 px.
+
+---
+
+# Fase de coherencia y cartografía
+
+- **Propagación (datos):** `riverKm` = distancia acumulada sobre la geometría (0; 8,0; 16,4; 24,9; 32,7; 39,6 km); `lagMin` E1/E2/E3 = −100/−70/−35; umbrales de vigilancia/naranja de E1–E3 recalibrados para conservar los tiempos de alerta; `baselineT` = −120. Celeridad conceptual ≈ 3,8–4,4 m/s entre estaciones (no es una calibración; ver `docs/PROPAGACION.md`). Predicción en t≈127 y alerta roja de E4 en t≈249 sin cambios; motor intacto.
+- **Cartografía:** `data/scenery.json` + `core/scenery.js`: uso del suelo (campos, monte, huellas urbanas), vegetación ribereña, calles, rutas, caminos rurales (sólo operadores), costanera, plazas/parques y 4 puentes (E3 y E4 sobre los suyos). ≈ 25 elementos SVG; sin cambios en río, zonas, estaciones ni simulador.
+- **Pruebas:** `validate.mjs` 78/78 (incluye propagación, escenografía al día, límites, presupuesto, puentes, y que nada cubra estaciones/zonas).

@@ -1,10 +1,12 @@
 import { fmtLevel, fmtRate } from '../core/format.js';
+import { addScenery } from '../core/scenery.js';
 import { $, esc, symbols } from './ui.js';
 
 export function createMap(sim, select) {
   const L = window.L, data = sim.data.map;
   const map = L.map('river-map', { zoomControl: false, zoomSnap: .25, attributionControl: false, scrollWheelZoom: false }).setView(data.center, data.zoom);
   L.control.zoom({ position: 'bottomright', zoomInTitle: 'Acercar', zoomOutTitle: 'Alejar' }).addTo(map);
+  addScenery(L, map, sim.data.scenery, { detail: 'ops' });   // territorio ficticio bajo el río y las zonas
   map.createPane('river'); map.getPane('river').style.zIndex = 410;
   L.polyline(data.river.path, { color: '#234857', weight: 24, opacity: .65, interactive: false }).addTo(map);
   L.polyline(data.river.path, { color: '#66bacb', weight: 12, opacity: .25, interactive: false }).addTo(map);

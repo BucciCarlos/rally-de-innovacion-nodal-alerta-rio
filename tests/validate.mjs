@@ -6,6 +6,7 @@ import { dirname, join, resolve, relative } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { buildModel, snapshotAt, STATUS_ORDER } from '../site/assets/js/core/engine.js';
 import { createController, STORAGE_KEY } from '../site/assets/js/core/controller.js';
+import { buildScenery } from '../tools/gen-scenery.mjs';
 import { loraLink, networkSummary, sirens } from '../site/assets/js/core/derived.js';
 import * as telemetry from '../site/assets/js/nodo/telemetry.js';
 
@@ -95,6 +96,30 @@ section('Coherencia geográfica y propagación (conceptual)');
   const speeds = sts.slice(1).map((s, i) => ((s.riverKm - sts[i].riverKm) * 1000) / ((s.lagMin - sts[i].lagMin) * 60));
   check('celeridad conceptual implícita uniforme entre estaciones (3,5–4,7 m/s)', speeds.every((v) => v >= 3.5 && v <= 4.7), JSON.stringify(speeds.map((v) => +v.toFixed(2))));
   check('estado base estable: todas las tendencias en "steady" y sistema normal', (() => { const b = snapshotAt(model, data.scenario.baselineT); return b.stations.every((x) => x.trend === 'steady') && b.system.status === 'normal'; })());
+}
+
+
+/* ---------------------------------------------------------------- escenografía territorial */
+section('Escenografía cartográfica (capas visuales compartidas)');
+{
+  const scen = json('site/data/scenery.json');
+  check('scenery.json está al día y es determinista (coincide con tools/gen-scenery.mjs)', JSON.stringify(buildScenery(data.map)) === JSON.stringify(scen));
+  const coords = []; const walk2 = (o) => { if (Array.isArray(o) && o.length === 2 && typeof o[0] === 'number') coords.push(o); else if (Array.isArray(o)) o.forEach(walk2); else if (o && typeof o === 'object') Object.values(o).forEach(walk2); };
+  walk2({ lc: scen.landcover, p: scen.parks, r: scen.roads, b: scen.bridges });
+  const [[s0, w0], [n0, e0]] = data.map.bounds;
+  check('todas las coordenadas caen dentro de los límites del mapa', coords.every(([la, lo]) => la >= s0 && la <= n0 && lo >= w0 && lo <= e0));
+  check(`presupuesto ligero: ${coords.length} vértices (≤ 2500) y pocos objetos`, coords.length <= 2500 && scen.landcover.forest.length <= 12 && scen.landcover.farmland.length <= 14 && scen.roads.streets.length <= 70);
+  const pip = (pt, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [yi, xi] = poly[i], [yj, xj] = poly[j]; if ((xi > pt[1]) !== (xj > pt[1]) && pt[0] < ((yj - yi) * (pt[1] - xi)) / (xj - xi) + yi) c = !c; } return c; };
+  const keyPts = [...Object.values(data.map.river.stationPathIndex).map((i) => data.map.river.path[i]), ...data.map.landmarks.map((l) => l.latlng)];
+  const natural = [...scen.landcover.forest, ...scen.landcover.farmland.map((f) => f.polygon), ...scen.landcover.riparian, ...scen.parks.map((k) => k.polygon)];
+  check('vegetación, campos y parques no cubren estaciones ni puntos de referencia', natural.every((poly) => keyPts.every((k) => !pip(k, poly))));
+  check('bosques y campos quedan fuera de las zonas de riesgo', [...scen.landcover.forest, ...scen.landcover.farmland.map((f) => f.polygon)].every((poly) => poly.every((q) => data.map.zones.every((z) => !pip(q, z.polygon)))));
+  const segX = (a, b, c, d) => { const o = (p, q, r) => (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1]); return o(a, b, c) * o(a, b, d) <= 0 && o(c, d, a) * o(c, d, b) <= 0; };
+  const path = data.map.river.path;
+  const crosses = (line) => path.some((_, i) => i > 0 && segX(line[0], line[1], path[i - 1], path[i]));
+  check('los 4 puentes cruzan el cauce', scen.bridges.length === 4 && scen.bridges.every((b) => crosses(b.line)));
+  check('E3 y E4 siguen sobre sus puentes (tablero centrado en la estación, sin mover marcadores)', ['E3', 'E4'].every((id) => { const b = scen.bridges.find((x) => x.stationId === id); const st = path[data.map.river.stationPathIndex[id]]; const mid = [(b.line[0][0] + b.line[1][0]) / 2, (b.line[0][1] + b.line[1][1]) / 2]; return Math.hypot(mid[0] - st[0], mid[1] - st[1]) < 0.0006; }));
+  check('la capa de escenografía no importa módulos ni toca el simulador', !/^\s*import /m.test(rd('site/assets/js/core/scenery.js')));
 }
 
 /* ---------------------------------------------------------------- derivados: LoRa, sirenas, telemetría del nodo */

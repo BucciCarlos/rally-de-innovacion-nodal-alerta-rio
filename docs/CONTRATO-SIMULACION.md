@@ -150,7 +150,14 @@ Funciones puras sobre el snapshot (no tocan el motor): `loraLink(station)` → `
 La telemetría adicional del Modo Nodo (µT, inclinación, vibración, solar, paquetes) vive en `site/assets/js/nodo/telemetry.js` y es determinista
 (función del tiempo y del snapshot); ver `docs/NODO.md`.
 
-## 8. Cambios al contrato
+## 8. Escenografía territorial (`data/scenery.json`, opcional)
+
+Capa **solo visual** y ficticia, generada de forma determinista por `tools/gen-scenery.mjs` a partir de `data/map.json` (no altera río, estaciones ni zonas):
+`landcover` (`urban`, `farmland`, `forest`, `riparian`), `parks`, `roads` (`main`, `secondary`, `coast`, `streets`, `tracks`) y `bridges` (4; E3 y E4 siguen sobre sus puentes).
+Se carga como dato opcional (`sim.data.scenery`; si falta, los mapas funcionan igual) y se dibuja con `core/scenery.js → addScenery(L, map, scenery, {detail:'public'|'ops'})`
+**antes** de crear río y zonas; cada vista le da su estilo por CSS (clases `sc-*`): pública clara y de bajo contraste, operadores apagada y con caminos rurales. Sin etiquetas ni interacción.
+
+## 9. Cambios al contrato
 
 Sólo el coordinador (rama `main`, archivos del núcleo) modifica `core/`, `data/`, `base.css`, `sim-controls.css`.
 Si necesitás un campo nuevo, un color, otro texto o un bug arreglado: escribilo en `docs/requests/<tu-rol>.md` (archivo tuyo) con

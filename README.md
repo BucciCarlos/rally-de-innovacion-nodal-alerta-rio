@@ -56,12 +56,13 @@ site/                         ← lo que se publica (Netlify: publish = "site")
           sim-controls.js     Widget de control compartido
           format.js           Formateo es-AR y utilidades
           derived.js          Derivados puros: enlace LoRa, red y sirenas conceptuales
+          scenery.js          Capa cartográfica visual compartida (calles, puentes, vegetación…)
     js/publico/ js/operadores/ js/nodo/                          [cada vista]
     vendor/  leaflet/ chartjs/    fonts/ (Inter, Bricolage Grotesque; OFL)   → sin CDN
-  data/   scenario.json stations.json levels.json map.json       Datos sintéticos centralizados
+  data/   scenario.json stations.json levels.json map.json scenery.json   Datos sintéticos centralizados (scenery = capa visual del territorio)
 docs/     CONTRATO-SIMULACION.md  agents/…                       Contrato y briefs
 tests/    validate.mjs browser-smoke.mjs check-ownership.mjs
-tools/    gen-map.mjs                                            Genera la geografía ficticia
+tools/    gen-map.mjs gen-scenery.mjs                            Generan la geografía ficticia y su escenografía (deterministas)
 netlify.toml  package.json  AGENTS.md  CLAUDE.md
 ```
 

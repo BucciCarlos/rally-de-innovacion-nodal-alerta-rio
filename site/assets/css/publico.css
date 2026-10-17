@@ -407,3 +407,16 @@ h2 { font-size: clamp(1.7rem, 4.2vw, 2.5rem); font-weight: 800; letter-spacing: 
 
 .how__more { margin: 28px 0 0; font-size: .92rem; color: var(--ar-muted); }
 .how__more a { color: var(--ar-water-deep); font-weight: 600; text-underline-offset: 3px; }
+
+/* ---- Escenografía territorial ficticia (core/scenery.js): clara y de bajo contraste, bajo zonas, río y estaciones ---- */
+.sc-farm { stroke: none; fill-opacity: .9; } .sc-farm--a { fill: #e8e5c4; } .sc-farm--b { fill: #dde7c6; }
+.sc-forest { fill: #c6dcbc; fill-opacity: .95; stroke: #b4d0a9; stroke-width: 1px; stroke-linejoin: round; }
+.sc-urban { fill: #e7e2d9; fill-opacity: .95; stroke: #d8d1c4; stroke-width: 1px; stroke-linejoin: round; }
+.sc-riparian { fill: #bdd9b3; fill-opacity: .95; stroke: none; }
+.sc-park { fill: #b6dcad; fill-opacity: 1; stroke: #a1cc97; stroke-width: 1px; } .sc-park--paseo { fill: #c4e2bb; }
+.sc-street { fill: none; stroke: #fff; stroke-opacity: .85; stroke-width: 1.3px; }
+.sc-road-casing { fill: none; stroke-linecap: round; stroke-linejoin: round; } .sc-road-casing--sec { stroke: #d9d3c5; stroke-width: 4px; } .sc-road-casing--main { stroke: #d2c6a8; stroke-width: 7px; }
+.sc-road { fill: none; stroke-linecap: round; stroke-linejoin: round; } .sc-road--sec { stroke: #fffdf6; stroke-width: 2.4px; } .sc-road--main { stroke: #fff4d2; stroke-width: 4.2px; }
+.sc-coast { fill: none; stroke: #fffdf4; stroke-width: 3px; stroke-linecap: round; stroke-opacity: .95; }
+.sc-bridge-casing { fill: none; stroke: #8f8a7c; stroke-width: 9px; stroke-linecap: butt; }
+.sc-bridge { fill: none; stroke: #f6f1e4; stroke-width: 5.5px; stroke-linecap: butt; }
