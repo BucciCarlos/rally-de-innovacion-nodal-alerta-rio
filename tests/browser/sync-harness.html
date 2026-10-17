@@ -1,9 +1,10 @@
 <!doctype html>
 <meta charset="utf-8">
 <title>Harness de sincronización</title>
-<style>iframe{width:48vw;height:300px}</style>
+<style>iframe{width:32vw;height:300px}</style>
 <iframe id="pub" src="../../site/index.html"></iframe>
 <iframe id="ops" src="../../site/operadores/index.html"></iframe>
+<iframe id="nodo" src="../../site/nodo/index.html#E4"></iframe>
 <pre id="result">PENDING</pre>
 <script>
 const log = [];
@@ -15,25 +16,31 @@ async function waitFor(fn, ms = 8000) { const t0 = Date.now(); while (Date.now()
 
 (async () => {
   try {
-    ok('ambas vistas montan el control de simulación', await waitFor(() => q('pub', '.simctl__toggle') && q('ops', '.simctl__toggle')));
-    ok('ambas arrancan con simulación apagada', q('pub', '.simctl__toggle').getAttribute('aria-pressed') === 'false' && q('ops', '.simctl__toggle').getAttribute('aria-pressed') === 'false');
+    ok('las tres vistas montan el control de simulación', await waitFor(() => q('pub', '.simctl__toggle') && q('ops', '.simctl__toggle') && q('nodo', '.simctl__toggle')));
+    ok('marca Nodal en las tres vistas', ['pub', 'ops', 'nodo'].every((id) => /^Nodal/.test(doc(id).title) && /Nodal/.test(doc(id).body.innerText) && !/Alerta R[ií]o/i.test(doc(id).body.innerText)));
+    ok('el Modo Nodo muestra su pantalla con datos simulados', /Modo Nodo/i.test(q('nodo', '.apphead').textContent) && /Datos simulados/i.test(q('nodo', '.concept-banner').innerText) && /E4/.test(q('nodo', '#node-id').innerText));
+    ok('las tres arrancan con simulación apagada', ['pub', 'ops', 'nodo'].every((id) => q(id, '.simctl__toggle').getAttribute('aria-pressed') === 'false'));
     q('pub', '.simctl__toggle').click();
-    ok('activar en pública activa operadores', await waitFor(() => q('ops', '.simctl__toggle').getAttribute('aria-pressed') === 'true'));
+    ok('activar en pública activa operadores y nodo', await waitFor(() => q('ops', '.simctl__toggle').getAttribute('aria-pressed') === 'true' && q('nodo', '.simctl__toggle').getAttribute('aria-pressed') === 'true'));
     q('pub', '[data-act="play"]').click();
     await sleep(2500);
     const cp = q('pub', '.simctl__clock').textContent, co = q('ops', '.simctl__clock').textContent;
-    ok(`reloj avanza y coincide (${cp} | ${co})`, cp === co && !cp.startsWith('18:00 · +0'));
+    const cn = q('nodo', '.simctl__clock').textContent;
+    ok(`reloj avanza y coincide en las tres (${cp} | ${co} | ${cn})`, cp === co && co === cn && !cp.startsWith('18:00 · +0'));
     q('ops', '[data-act="play"]').click();           // pausar desde operadores
     ok('pausar en operadores pausa la pública', await waitFor(() => q('pub', '[data-act="play"]').getAttribute('aria-label') === 'Reproducir'));
     const frozen = q('pub', '.simctl__clock').textContent;
     await sleep(1200);
-    ok('el tiempo queda congelado en ambas', q('pub', '.simctl__clock').textContent === frozen && q('ops', '.simctl__clock').textContent === frozen);
+    ok('el tiempo queda congelado en las tres', q('pub', '.simctl__clock').textContent === frozen && q('ops', '.simctl__clock').textContent === frozen && q('nodo', '.simctl__clock').textContent === frozen);
     q('ops', '[data-act="forward"]').click();
     ok('avanzar en operadores mueve la pública', await waitFor(() => q('pub', '.simctl__clock').textContent !== frozen && q('pub', '.simctl__clock').textContent === q('ops', '.simctl__clock').textContent));
+    ok('el reloj del nodo coincide con el del escenario', q('nodo', '#sb-clock').textContent === q('pub', '.simctl__clock').textContent.split(' ')[0]);
+    q('nodo', '[data-act="forward"]').click();
+    ok('avanzar desde el nodo mueve las otras dos', await waitFor(() => q('pub', '.simctl__clock').textContent === q('nodo', '.simctl__clock').textContent && q('ops', '.simctl__clock').textContent === q('nodo', '.simctl__clock').textContent && q('ops', '.simctl__clock').textContent !== frozen));
     q('pub', '[data-act="reset"]').click();
-    ok('reiniciar en pública reinicia operadores', await waitFor(() => /\+0 min/.test(q('ops', '.simctl__clock').textContent)));
+    ok('reiniciar en pública reinicia operadores y nodo', await waitFor(() => /\+0 min/.test(q('ops', '.simctl__clock').textContent) && /\+0 min/.test(q('nodo', '.simctl__clock').textContent)));
     q('ops', '.simctl__toggle').click();
-    ok('apagar en operadores apaga la pública', await waitFor(() => q('pub', '.simctl__toggle').getAttribute('aria-pressed') === 'false'));
+    ok('apagar en operadores apaga pública y nodo', await waitFor(() => q('pub', '.simctl__toggle').getAttribute('aria-pressed') === 'false' && q('nodo', '.simctl__toggle').getAttribute('aria-pressed') === 'false'));
   } catch (e) { log.push('FAIL excepción: ' + e.message); }
   document.getElementById('result').textContent = 'DONE\n' + log.join('\n');
 })();

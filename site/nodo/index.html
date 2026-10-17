@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nodal · Modo Nodo</title>
+<meta name="description" content="Modo Nodo de Nodal: representación conceptual de un celular reutilizado como estación de monitoreo hídrico. Prototipo conceptual con datos simulados.">
+<meta name="theme-color" content="#0a1b2e">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/sim-controls.css">
+<link rel="stylesheet" href="../assets/css/nodo.css">
+</head>
+<body>
+<a class="skip-link" href="#screen">Ir a la pantalla del nodo</a>
+<div class="stage">
+
+  <aside class="side side--left" aria-label="Contexto">
+    <a class="brand" href="../" aria-label="Nodal, vista pública">
+      <svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><path d="M16 16 7 7.5M16 16l10-7M16 16l-1 11"/></g><circle cx="16" cy="16" r="5" fill="#4cc3e8"/><circle cx="7" cy="7.5" r="3" fill="currentColor"/><circle cx="26" cy="9" r="3" fill="currentColor"/><circle cx="15" cy="27" r="3" fill="currentColor"/></svg>
+      <span>Nodal</span>
+    </a>
+    <p class="eyebrow">Modo Nodo</p>
+    <h1>De dónde sale el dato</h1>
+    <p class="lede">Este es el celular reutilizado, instalado dentro de una estación junto al río. Mide, vigila su propia salud y transmite telemetría hacia el centro de operaciones.</p>
+    <ol class="flow" aria-label="Recorrido del dato">
+      <li><b>1</b><span><strong>Nodo</strong> mide y supervisa el celular (esta pantalla).</span></li>
+      <li><b>2</b><span><strong>Gateway LoRa</strong> recoge los paquetes de los nodos.</span></li>
+      <li><b>3</b><span><strong>Centro de operaciones</strong> los combina con el clima y estima el riesgo.</span></li>
+      <li><b>4</b><span><strong>Ciudadanía</strong> recibe un aviso claro y simple.</span></li>
+    </ol>
+    <nav class="links" aria-label="Otras vistas">
+      <a href="../" target="_blank" rel="noopener">Vista pública ↗</a>
+      <a href="../operadores/" target="_blank" rel="noopener">Centro de operaciones ↗</a>
+    </nav>
+  </aside>
+
+  <main class="phone" id="phone">
+    <div class="phone__frame">
+      <span class="phone__cam" aria-hidden="true"></span>
+      <div class="screen" id="screen" tabindex="-1">
+        <div class="statusbar" aria-hidden="true">
+          <span id="sb-clock">--:--</span>
+          <span class="statusbar__icons">
+            <svg id="sb-lora" viewBox="0 0 20 14" width="18" height="13"><rect x="1" y="9" width="3" height="4" rx="1"/><rect x="6" y="6" width="3" height="7" rx="1"/><rect x="11" y="3" width="3" height="10" rx="1"/><rect x="16" y="0" width="3" height="13" rx="1"/></svg>
+            <span class="sb-batt"><i id="sb-batt-fill"></i></span><span id="sb-batt-pct">--</span>
+          </span>
+        </div>
+
+        <header class="apphead">
+          <span class="apphead__brand">
+            <svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><path d="M16 16 7 7.5M16 16l10-7M16 16l-1 11"/></g><circle cx="16" cy="16" r="5" fill="#4cc3e8"/><circle cx="7" cy="7.5" r="3" fill="currentColor"/><circle cx="26" cy="9" r="3" fill="currentColor"/><circle cx="15" cy="27" r="3" fill="currentColor"/></svg>
+            <strong>Nodal</strong><em>Modo Nodo</em>
+          </span>
+          <label class="apphead__station"><span class="sr-only">Estación del nodo</span>
+            <select id="station-select" aria-label="Estación del nodo"></select>
+          </label>
+        </header>
+
+        <div class="scroll" id="scroll">
+          <p class="concept-banner"><span class="sim-badge">Prototipo conceptual · Datos simulados</span></p>
+
+          <section class="card card--node" id="card-node" data-health="ok" aria-labelledby="node-title">
+            <div class="node__top">
+              <div>
+                <p class="eyebrow" id="node-id">Nodo E4</p>
+                <h2 id="node-title">Costanera Villa Serena</h2>
+                <p class="muted" id="node-role">Zona urbana crítica</p>
+              </div>
+              <span class="pill" id="node-state" data-health="ok">Operativo</span>
+            </div>
+            <dl class="kv kv--2">
+              <div><dt>Última medición</dt><dd id="node-last">—</dd></div>
+              <div><dt>Estado del río</dt><dd id="node-river" data-status="normal">—</dd></div>
+            </dl>
+            <ul class="sensors" id="node-sensors" aria-label="Estado de los sensores"></ul>
+            <ul class="warnings" id="node-warnings" aria-live="polite" hidden></ul>
+          </section>
+
+          <section class="card" id="card-level" aria-labelledby="level-title">
+            <div class="card__head"><h2 id="level-title">Nivel del agua y magnetómetro</h2><span class="tag tag--exp">Experimental</span></div>
+            <svg class="diagram" id="level-diagram" viewBox="0 0 280 200" role="img" aria-labelledby="level-diagram-title level-diagram-desc">
+              <title id="level-diagram-title">Esquema de flotador, imán y magnetómetro</title>
+              <desc id="level-diagram-desc">Un flotador con un imán sube y baja dentro de un tubo con el nivel del agua. El magnetómetro del celular, arriba del tubo, registra cómo cambia el campo magnético.</desc>
+              <rect class="dg-sky" x="0" y="0" width="280" height="200" rx="14"/>
+              <rect class="dg-phone" x="22" y="10" width="76" height="34" rx="8"/>
+              <circle class="dg-sensor" cx="60" cy="38" r="4"/>
+              <text class="dg-label dg-label--phone" x="60" y="26" text-anchor="middle">Celular</text>
+              <g id="dg-field" class="dg-field"><path d="M48 46c-6 10-6 18 0 26"/><path d="M72 46c6 10 6 18 0 26"/><path d="M40 46c-12 16-12 30 0 42"/><path d="M80 46c12 16 12 30 0 42"/></g>
+              <rect class="dg-tube" x="46" y="44" width="28" height="144" rx="5"/>
+              <rect class="dg-water" id="dg-water-tube" x="48" y="140" width="24" height="46"/>
+              <rect class="dg-water dg-water--river" id="dg-water-river" x="76" y="140" width="190" height="48" rx="4"/>
+              <g id="dg-float" class="dg-float"><rect x="49" y="-8" width="22" height="16" rx="5" class="dg-float__body"/><rect x="55" y="-4" width="5" height="8" class="dg-mag-n"/><rect x="60" y="-4" width="5" height="8" class="dg-mag-s"/></g>
+              <line id="dg-th-v" class="dg-th dg-th--vigilancia" x1="76" x2="96"/><line id="dg-th-n" class="dg-th dg-th--naranja" x1="76" x2="96"/><line id="dg-th-r" class="dg-th dg-th--roja" x1="76" x2="96"/>
+              <text class="dg-label" id="dg-th-v-t" x="100" text-anchor="start">vigilancia</text>
+              <text class="dg-label" id="dg-th-n-t" x="100" text-anchor="start">naranja</text>
+              <text class="dg-label" id="dg-th-r-t" x="100" text-anchor="start">roja</text>
+              <text class="dg-label dg-label--strong" x="270" y="196" text-anchor="end" id="dg-level-t">Nivel simulado</text>
+              <g class="dg-callouts"><text class="dg-label" x="112" y="28">Magnetómetro</text><path d="M108 24H82" class="dg-lead"/><text class="dg-label" x="112" y="64">Flotador + imán</text><path d="M108 60H78" class="dg-lead" id="dg-lead-float"/></g>
+            </svg>
+            <div class="readouts">
+              <div class="readout readout--lg"><span class="readout__k">Nivel del agua (simulado)</span><strong class="readout__v" id="lv-level">—</strong><span class="readout__s" id="lv-level-s"></span></div>
+              <div class="readout readout--lg"><span class="readout__k">Campo magnético |B|</span><strong class="readout__v" id="mg-ut">—</strong><span class="readout__s">Señal sintética ilustrativa</span></div>
+            </div>
+            <svg class="spark" id="mg-spark" viewBox="0 0 240 44" preserveAspectRatio="none" role="img" aria-label="Señal magnética sintética de los últimos 60 minutos simulados"><polyline id="mg-line" points=""/></svg>
+            <dl class="kv">
+              <div><dt>Calibración</dt><dd><span class="pill pill--dashed" id="mg-cal">Pendiente · sin validar</span></dd></div>
+            </dl>
+            <p class="note"><strong>Concepto experimental.</strong> La conversión entre campo magnético y nivel del río todavía no fue validada físicamente: no hay calibración ni precisión garantizada. El nivel mostrado es un dato simulado independiente de la señal magnética.</p>
+          </section>
+
+          <section class="card" id="card-motion" aria-labelledby="motion-title">
+            <div class="card__head"><h2 id="motion-title">Acelerómetro y giroscopio</h2><span class="pill" id="mo-stability" data-tone="ok">Estable</span></div>
+            <div class="motion">
+              <svg class="bubble" viewBox="0 0 120 120" role="img" aria-labelledby="bubble-title"><title id="bubble-title">Nivel de burbuja: inclinación simulada del celular</title>
+                <circle cx="60" cy="60" r="54" class="bb-ring"/><circle cx="60" cy="60" r="30" class="bb-ring bb-ring--in"/><path d="M60 8v104M8 60h104" class="bb-cross"/><circle id="bb-dot" cx="60" cy="60" r="9" class="bb-dot"/></svg>
+              <dl class="kv kv--col">
+                <div><dt>Inclinación (cabeceo / alabeo)</dt><dd id="mo-tilt">—</dd></div>
+                <div><dt>Vibración</dt><dd id="mo-vib">—</dd></div>
+                <div><dt>Giro</dt><dd id="mo-gyro">—</dd></div>
+              </dl>
+            </div>
+            <div class="quality"><span class="quality__k">Calidad de medición</span><div class="meter"><i id="mo-q-fill"></i></div><strong id="mo-q">—</strong></div>
+            <p class="gusts" id="mo-gusts"></p>
+            <p class="note">Estos sensores supervisan el movimiento y la orientación del celular para detectar sacudidas o alteraciones. No miden la crecida.</p>
+          </section>
+
+          <section class="card" id="card-power" aria-labelledby="power-title">
+            <div class="card__head"><h2 id="power-title">Energía y alimentación</h2><span class="pill" id="pw-state" data-tone="ok">Buena</span></div>
+            <div class="power">
+              <div class="battery"><div class="battery__body"><i id="pw-fill"></i></div><span class="battery__cap"></span></div>
+              <div class="power__main"><strong id="pw-pct">—</strong><span id="pw-auto" class="muted">—</span></div>
+            </div>
+            <dl class="kv kv--2">
+              <div><dt>Panel solar (conceptual)</dt><dd id="pw-solar">—</dd></div>
+              <div><dt>Temperatura interna (simulada)</dt><dd id="pw-temp">—</dd></div>
+            </dl>
+            <p class="alertline" id="pw-warn" role="status" hidden></p>
+          </section>
+
+          <section class="card" id="card-lora" aria-labelledby="lora-title">
+            <div class="card__head"><h2 id="lora-title">Transmisión LoRa</h2><span class="pill" id="lr-state" data-tone="ok">Enlace activo</span></div>
+            <svg class="diagram diagram--lora" id="lora-diagram" viewBox="0 0 300 100" role="img" aria-labelledby="lora-dg-title"><title id="lora-dg-title">Esquema: nodo, gateway y centro de operaciones</title>
+              <path id="lk-a" class="lk" d="M62 44H138"/><path id="lk-b" class="lk" d="M164 44H236"/>
+              <circle class="pkt pkt--a" cx="62" cy="44" r="3.500"/><circle class="pkt pkt--b" cx="164" cy="44" r="3.500"/>
+              <path id="lk-x" class="lk-x" d="M96 36l12 16m0-16L96 52"/>
+              <g class="nd nd--node"><rect x="34" y="22" width="28" height="44" rx="6"/><circle cx="48" cy="58" r="2"/><path d="M40 30h16"/></g>
+              <g class="nd nd--gw"><path d="M151 24v38M142 62h18M146 36a8 8 0 0 1 10 0M143 30a13 13 0 0 1 16 0"/></g>
+              <g class="nd nd--hq"><rect x="236" y="26" width="38" height="26" rx="4"/><path d="M246 60h18M255 52v8"/></g>
+              <text class="dg-label" x="48" y="84" text-anchor="middle" id="lk-t-node">Nodo</text>
+              <text class="dg-label" x="151" y="84" text-anchor="middle">Gateway</text>
+              <text class="dg-label" x="255" y="84" text-anchor="middle">Centro Nodal</text>
+            </svg>
+            <dl class="kv kv--3">
+              <div><dt>RSSI</dt><dd id="lr-rssi">—</dd></div>
+              <div><dt>SNR</dt><dd id="lr-snr">—</dd></div>
+              <div><dt>Dispersión</dt><dd id="lr-sf">—</dd></div>
+            </dl>
+            <div class="packet" id="lr-packet" aria-live="off">
+              <p class="packet__head"><span>Último paquete de telemetría (simulado)</span><strong id="lr-seq">—</strong></p>
+              <pre class="packet__body" id="lr-body">—</pre>
+              <p class="packet__foot" id="lr-foot">—</p>
+            </div>
+            <p class="muted small" id="lr-net">—</p>
+            <p class="note"><strong>Arquitectura propuesta.</strong> LoRa forma parte del diseño de Nodal; en esta demostración el enlace y los paquetes son simulados y no hay ninguna conexión física operativa.</p>
+          </section>
+
+          <p class="foot-note" id="nd-disclaimer"></p>
+        </div>
+        <div class="navbar" aria-hidden="true"><span></span></div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="side side--right" aria-label="Simulación y límites">
+    <div class="simbox">
+      <p class="eyebrow">Escenario</p>
+      <p class="simbox__t" id="sim-mode">Estado base — activá la simulación</p>
+      <div id="sim-slot" class="sim-slot"></div>
+      <p class="muted small">Se sincroniza con la vista pública y el centro de operaciones abiertos en otras pestañas.</p>
+    </div>
+    <div class="limits">
+      <p class="eyebrow">Qué es experimental</p>
+      <ul>
+        <li><strong>Magnetómetro:</strong> concepto sin validación física; sin calibración ni precisión garantizada.</li>
+        <li><strong>LoRa:</strong> arquitectura propuesta; enlace simulado.</li>
+        <li><strong>Datos:</strong> todos sintéticos, derivados del escenario.</li>
+      </ul>
+    </div>
+  </aside>
+</div>
+<script type="module" src="../assets/js/nodo/main.js"></script>
+<noscript>Esta demostración requiere JavaScript.</noscript>
+</body>
+</html>

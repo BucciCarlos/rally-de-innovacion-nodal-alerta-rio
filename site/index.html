@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Alerta Río — Estado del río</title>
+  <title>Nodal — Estado del río</title>
   <meta name="description" content="Demostración conceptual: estado del río, alertas y recomendaciones con datos simulados.">
   <meta name="theme-color" content="#0a1b2e">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
@@ -16,13 +16,11 @@
   <a class="skip-link" href="#estado">Ir al estado del río</a>
 
   <header class="pub-header">
-    <a class="pub-brand" href="./" aria-label="Alerta Río — inicio">
+    <a class="pub-brand" href="./" aria-label="Nodal — inicio">
       <svg class="pub-logo" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false">
-        <rect x="9" y="2.5" width="14" height="27" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
-        <path d="M12 19c2-2 3.500-2 5 0s3 2 4 0M12 23.500c2-2 3.500-2 5 0s3 2 4 0" fill="none" stroke="var(--ar-water-hi)" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="16" cy="9" r="1.800" fill="currentColor"/>
+        <g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><path d="M16 16 7 7.5M16 16l10-7M16 16l-1 11"/></g><circle cx="16" cy="16" r="5" fill="var(--ar-water-hi, #4cc3e8)"/><circle cx="7" cy="7.5" r="3" fill="currentColor"/><circle cx="26" cy="9" r="3" fill="currentColor"/><circle cx="15" cy="27" r="3" fill="currentColor"/>
       </svg>
-      <span class="pub-brand__name">Alerta Río</span>
+      <span class="pub-brand__name">Nodal</span>
     </a>
     <span class="sim-badge pub-badge">Datos simulados</span>
     <a class="pub-ops" href="operadores/" target="_blank" rel="noopener" aria-label="Acceso para operadores (se abre en otra pestaña)">
@@ -145,7 +143,7 @@
               <path d="M112 12l-3 9M124 12l-3 9M136 12l-3 9" class="art-line art-water"/>
             </svg>
             <h3>2. Mira el río y la lluvia</h3>
-            <p>Con su cámara, micrófono y sensores mide cuánta agua hay, cuánto llueve y si el tiempo está cambiando.</p>
+            <p>Con sus sensores mide cuánta agua hay, cuánto llueve y si el tiempo está cambiando, y lo transmite al centro de análisis.</p>
           </li>
           <li class="step">
             <svg class="step__art" viewBox="0 0 160 120" aria-hidden="true" focusable="false">
@@ -171,6 +169,7 @@
             <p>Si hace falta, ves un mensaje simple: qué pasa, qué tan grave es y a dónde ir. Sin tecnicismos.</p>
           </li>
         </ol>
+        <p class="how__more">¿Querés ver cómo es el celular de una estación? <a href="nodo/#E4" target="_blank" rel="noopener">Ver el Modo Nodo (otra pestaña) ↗</a></p>
       </div>
     </section>
   </main>
@@ -178,8 +177,8 @@
   <footer class="foot">
     <div class="wrap foot__grid">
       <div>
-        <p class="foot__brand">Alerta Río</p>
-        <p class="foot__small">Rally Latinoamericano de Innovación 2026 · Mockup conceptual</p>
+        <p class="foot__brand">Nodal</p>
+        <p class="foot__small">Sistema de alerta temprana de crecidas · Rally Latinoamericano de Innovación 2026 · Mockup conceptual</p>
       </div>
       <p class="foot__disclaimer"><span class="sim-badge">Datos simulados</span> <span id="disclaimer">DEMOSTRACIÓN CONCEPTUAL. Todos los datos, estaciones, alertas y predicciones son sintéticos y simulados. No es un sistema de alerta real: ante una emergencia real, seguí a las autoridades locales.</span></p>
     </div>

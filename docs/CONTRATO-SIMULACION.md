@@ -142,7 +142,15 @@ Estado compartido (JSON) en `localStorage['alertaRio.sim.v1']` y mensajes por `B
 - `storage` event como respaldo si `BroadcastChannel` no existe. Con `localStorage` bloqueado cada pestaña funciona por separado (sin romper).
 - Abrí la vista de operadores con `<a href="operadores/" target="_blank" rel="noopener">`: ambas comparten origen, así que se sincronizan.
 
-## 7. Cambios al contrato
+## 7. Derivados conceptuales (`core/derived.js`)
+
+Funciones puras sobre el snapshot (no tocan el motor): `loraLink(station)` → `{state:'activo'|'debil'|'sin-enlace', rssi, snr, sf}`,
+`networkSummary(snap)` → nodos + gateway + estado de la red, `sirens(snap, data.map)` → sirenas barriales con estado `reposo|advertencia|activa`
+(según la severidad de su zona: naranja → advertencia, roja → activación **conceptual**). Todo es visual: nada se envía ni se activa.
+La telemetría adicional del Modo Nodo (µT, inclinación, vibración, solar, paquetes) vive en `site/assets/js/nodo/telemetry.js` y es determinista
+(función del tiempo y del snapshot); ver `docs/NODO.md`.
+
+## 8. Cambios al contrato
 
 Sólo el coordinador (rama `main`, archivos del núcleo) modifica `core/`, `data/`, `base.css`, `sim-controls.css`.
 Si necesitás un campo nuevo, un color, otro texto o un bug arreglado: escribilo en `docs/requests/<tu-rol>.md` (archivo tuyo) con

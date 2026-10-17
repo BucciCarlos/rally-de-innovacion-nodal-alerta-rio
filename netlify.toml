@@ -1,4 +1,4 @@
-# Alerta Río — despliegue estático en Netlify (sin build, sin funciones, sin variables de entorno).
+# Nodal — despliegue estático en Netlify (sin build, sin funciones, sin variables de entorno).
 # Conexión: Netlify → Add new site → Import from Git → repo público de GitHub → rama main.
 # Cada push a main publica automáticamente el contenido de /site.
 

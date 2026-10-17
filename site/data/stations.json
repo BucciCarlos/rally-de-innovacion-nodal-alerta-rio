@@ -43,10 +43,10 @@
     }
   ],
   "sensors": [
-    { "id": "level", "label": "Nivel del agua (visión por cámara)" },
+    { "id": "level", "label": "Nivel del agua (flotador e imán · magnetómetro, experimental)" },
     { "id": "rain", "label": "Lluvia (micrófono acústico)" },
     { "id": "pressure", "label": "Presión atmosférica (barómetro)" },
-    { "id": "motion", "label": "Estabilidad del soporte (acelerómetro)" }
+    { "id": "motion", "label": "Estabilidad del soporte (acelerómetro y giroscopio)" }
   ],
   "dataQualityNote": "Estaciones conceptuales basadas en celulares reutilizados. Valores y umbrales inventados para la demostración."
 }

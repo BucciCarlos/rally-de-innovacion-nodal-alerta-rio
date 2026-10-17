@@ -1,4 +1,6 @@
-# Alerta Río
+# Nodal
+
+*Sistema de alerta temprana de crecidas · repositorio sugerido: `rally-de-innovacion-nodal-alerta-rio`*
 
 **Rally Latinoamericano de Innovación 2026 — mockup web funcional.**
 
@@ -11,14 +13,15 @@ a un sistema central que combina mediciones, meteorología y predicciones para a
 
 ## Qué incluye
 
-Una única aplicación web **estática** con dos vistas:
+Una única aplicación web **estática** con tres perspectivas del mismo sistema:
 
 | Vista | Ruta | Para quién |
 |---|---|---|
 | **Portal público** | `/` | Ciudadanía: estado, tendencia, riesgo y recomendaciones con un mapa protagonista. |
-| **Centro de operaciones** | `/operadores/` | Defensa Civil, Bomberos y organismos: mapa, mediciones, gráficos, predicciones, alertas, eventos y estado de dispositivos. |
+| **Centro de operaciones** | `/operadores/` | Defensa Civil, Bomberos y organismos: mapa, mediciones, gráficos, predicciones, alertas, eventos, estado de dispositivos, red LoRa y sirenas simuladas. |
+| **Modo Nodo** | `/nodo/` | Jurado y equipo técnico: el celular reutilizado dentro de la estación — magnetómetro (experimental), movimiento, energía y transmisión LoRa (conceptual). Ver [`docs/NODO.md`](docs/NODO.md). |
 
-Ambas comparten un **simulador** (escenario de 6 h: normal → vigilancia → alerta naranja → alerta roja, con una predicción anticipada
+Las tres comparten un **simulador** (escenario de 6 h: normal → vigilancia → alerta naranja → alerta roja, con una predicción anticipada
 del nivel crítico) y se **sincronizan entre pestañas** con `BroadcastChannel` + `localStorage`. El control de simulación es un widget pequeño y discreto
 (botón "Simulación" → reproducir, pausar, avanzar, retroceder, reiniciar, velocidad y línea temporal).
 
@@ -34,7 +37,7 @@ python3 -m http.server 8000 --directory site
 py -m http.server 8000 --directory site
 ```
 
-Abrí <http://localhost:8000> (pública) y <http://localhost:8000/operadores/> (operadores). Con Node: `npm run serve`.
+Abrí <http://localhost:8000> (pública), <http://localhost:8000/operadores/> (operadores) y <http://localhost:8000/nodo/> (Modo Nodo). Con Node: `npm run serve`.
 
 ## Estructura
 
@@ -42,16 +45,18 @@ Abrí <http://localhost:8000> (pública) y <http://localhost:8000/operadores/> (
 site/                         ← lo que se publica (Netlify: publish = "site")
   index.html                  Vista pública                      [feat/publico]
   operadores/index.html       Vista de operadores                [feat/operadores]
+  nodo/index.html             Modo Nodo (celular reutilizado)    [nodo]
   assets/
     css/  base.css fonts.css sim-controls.css                    [núcleo: tokens de identidad compartidos]
-          publico.css  operadores.css                            [cada vista]
+          publico.css  operadores.css  nodo.css                  [cada vista]
     js/core/                                                     [núcleo]
           engine.js           Motor puro y determinista (snapshotAt)
           controller.js       Reproducción + sincronización entre pestañas
           simulation.js       API pública (createSimulation)
           sim-controls.js     Widget de control compartido
           format.js           Formateo es-AR y utilidades
-    js/publico/ js/operadores/                                   [cada vista]
+          derived.js          Derivados puros: enlace LoRa, red y sirenas conceptuales
+    js/publico/ js/operadores/ js/nodo/                          [cada vista]
     vendor/  leaflet/ chartjs/    fonts/ (Inter, Bricolage Grotesque; OFL)   → sin CDN
   data/   scenario.json stations.json levels.json map.json       Datos sintéticos centralizados
 docs/     CONTRATO-SIMULACION.md  agents/…                       Contrato y briefs
@@ -79,7 +84,7 @@ data/*.json ──► engine.js (puro: snapshotAt(model, t)) ──► simulatio
 
 ```bash
 node tests/validate.mjs        # datos, motor, escenario, sincronización (simulada), sintaxis y rutas  (Node ≥ 18)
-node tests/browser-smoke.mjs   # Chrome headless: ambas vistas en iframes comparten la simulación (BroadcastChannel/localStorage)
+node tests/browser-smoke.mjs   # Chrome headless: las tres vistas en iframes comparten la simulación (BroadcastChannel/localStorage)
 npm run test:all               # ambas
 ```
 
@@ -105,6 +110,7 @@ El trabajo se reparte con *git worktrees* sobre archivos **disjuntos** (sin conf
 | `main` | Núcleo: simulador, datos, tokens, tests, docs, despliegue |
 | `feat/publico` | `site/index.html`, `css/publico.css`, `js/publico/**` |
 | `feat/operadores` | `site/operadores/**`, `css/operadores.css`, `js/operadores/**` |
+| (Modo Nodo) | `site/nodo/**`, `css/nodo.css`, `js/nodo/**` |
 
 `main` siempre es recuperable: solo recibe merges con `npm run test:all` en verde.
 

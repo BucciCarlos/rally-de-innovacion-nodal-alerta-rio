@@ -2,17 +2,17 @@
 <html lang="es-AR">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Alerta Río · Centro de operaciones</title>
-<meta name="description" content="Centro de operaciones conceptual de Alerta Río. Datos y predicciones simulados."><meta name="robots" content="noindex">
+<title>Nodal · Centro de operaciones</title>
+<meta name="description" content="Centro de operaciones conceptual de Nodal, sistema de alerta temprana de crecidas. Datos y predicciones simulados."><meta name="robots" content="noindex">
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/css/base.css"><link rel="stylesheet" href="../assets/css/sim-controls.css"><link rel="stylesheet" href="../assets/vendor/leaflet/leaflet.css"><link rel="stylesheet" href="../assets/css/operadores.css">
 </head>
 <body>
 <a class="skip-link" href="#app">Ir al monitoreo</a>
 <header class="topbar">
-<a class="brand" href="../" aria-label="Alerta Río, vista pública"><span class="brand-mark" aria-hidden="true">≋</span><span>Alerta<span class="brand-light">Río</span><small>CENTRO DE OPERACIONES</small></span></a>
+<a class="brand" href="../" aria-label="Nodal, vista pública"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><path d="M16 16 7 7.5M16 16l10-7M16 16l-1 11"/></g><circle cx="16" cy="16" r="5" fill="var(--ar-water-hi, #4cc3e8)"/><circle cx="7" cy="7.5" r="3" fill="currentColor"/><circle cx="26" cy="9" r="3" fill="currentColor"/><circle cx="15" cy="27" r="3" fill="currentColor"/></svg></span><span>Nodal<small>CENTRO DE OPERACIONES</small></span></a>
 <div class="header-context"><span class="eyebrow">CUENCA DEL RÍO SERENA · FICTICIA</span><span>Monitoreo hidrológico</span></div>
-<div class="header-right"><span id="mobile-global-status" class="mobile-global-status status-pill" data-status="normal">Estado base</span><span class="sim-badge">Datos simulados</span><a class="public-link" href="../" target="_blank" rel="noopener">Vista pública ↗</a></div>
+<div class="header-right"><span id="mobile-global-status" class="mobile-global-status status-pill" data-status="normal">Estado base</span><span class="sim-badge">Datos simulados</span><a class="public-link" href="../nodo/#E4" id="node-link" target="_blank" rel="noopener" aria-label="Ver nodo: abre el Modo Nodo en otra pestaña">Ver nodo ↗</a><a class="public-link" href="../" target="_blank" rel="noopener">Vista pública ↗</a></div>
 </header>
 <main id="app" tabindex="-1">
 <div id="load-error" class="load-message" role="status">Preparando el escenario simulado…</div>
@@ -36,11 +36,15 @@
 <aside class="panel detail-panel" data-panel="stations" aria-labelledby="detail-title"><div class="panel-heading"><div><span class="eyebrow" id="detail-id"></span><h2 id="detail-title"></h2></div><span id="detail-status" class="status-pill"></span></div><div id="station-detail"></div></aside>
 <section class="panel chart-panel" data-panel="charts" aria-labelledby="chart-title"><div class="panel-heading"><div><span class="eyebrow">EVOLUCIÓN Y PRONÓSTICO SIMULADO</span><h2 id="chart-title">Nivel del río <span id="chart-station"></span></h2></div><span class="small-label">Historial + horizonte simulado</span></div><div class="chart-key"><span>━━ Historial observado</span><span>┄┄ Estimación simulada</span><span>▒ Intervalo estimado</span><span>┆ Ahora</span></div><div class="history-chart"><canvas id="history-chart" role="img" aria-label="Histórico y pronóstico simulado de la estación seleccionada"></canvas></div><p id="chart-description" class="panel-footnote"></p><div class="comparison"><div><h3>Presión sobre los umbrales</h3><p>Recorrido desde el nivel base al umbral rojo · 100 % = crítico</p></div><div class="comparison-chart"><canvas id="comparison-chart" role="img" aria-label="Recorrido desde el nivel base hasta el umbral crítico por estación"></canvas></div></div></section>
 <section class="panel alerts-panel" data-panel="alerts" aria-labelledby="alerts-title"><div class="panel-heading"><div><span class="eyebrow">ATENCIÓN OPERATIVA</span><h2 id="alerts-title">Alertas activas <span id="alert-count" class="number-tag"></span></h2></div><span class="small-label">Sólo visuales</span></div><div id="alert-list"></div><div class="response"><span class="eyebrow">RESPUESTA · GUÍA CONCEPTUAL</span><h3>Acciones sugeridas</h3><p id="response-copy"></p><details><summary>Consultar guía de respuesta</summary><p id="response-forecast"></p><p>Defensa Civil, Bomberos y salud son destinatarios conceptuales. Este prototipo no ejecuta protocolos ni envía alertas.</p></details></div></section>
-<section class="panel devices-panel" data-panel="devices" aria-labelledby="devices-title"><div class="panel-heading"><div><span class="eyebrow">CELULARES REUTILIZADOS</span><h2 id="devices-title">Salud de la red</h2></div><span id="device-count" class="small-label"></span></div><div id="device-list" class="device-grid"></div><div id="sensor-detail" class="sensor-detail"></div></section>
+<section class="panel devices-panel" data-panel="devices" aria-labelledby="devices-title"><div class="panel-heading"><div><span class="eyebrow">CELULARES REUTILIZADOS</span><h2 id="devices-title">Salud de la red</h2></div><span id="device-count" class="small-label"></span></div><div id="device-list" class="device-grid"></div><div id="sensor-detail" class="sensor-detail"></div>
+<div class="comms-block">
+<div class="comms-lora"><div class="comms-head"><span class="eyebrow">RED LORA · GATEWAY (CONCEPTUAL)</span><span id="network-state" class="mini-pill" data-tone="ok"></span></div><svg id="network-svg" class="network-svg" viewBox="0 0 330 100" role="img" aria-labelledby="network-title"><title id="network-title">Esquema de la red: seis nodos, un gateway y el centro de operaciones</title></svg><p id="network-note" class="comms-note"></p></div>
+<div class="comms-sirens"><div class="comms-head"><span class="eyebrow">SIRENAS BARRIALES · SIMULADAS</span><span class="mini-pill" data-tone="off">Sin activación real</span></div><ul id="siren-list" class="siren-list"></ul><p class="comms-note">Estado visual según la zona: reposo, advertencia (alerta naranja) y activación conceptual (alerta roja). No se envían señales ni se activa ningún dispositivo.</p></div>
+</div></section>
 <section class="panel events-panel" data-panel="events" aria-labelledby="events-title"><div class="panel-heading"><div><span class="eyebrow">TRAZABILIDAD DEL ESCENARIO</span><h2 id="events-title">Registro de eventos</h2></div><span id="event-count" class="small-label"></span></div><div class="event-filters"><label>Tipo <select id="event-type"><option value="all">Todos los eventos</option><option value="level">Nivel del río</option><option value="forecast">Predicción simulada</option><option value="device">Dispositivo</option><option value="weather">Meteorología</option><option value="system">Sistema</option><option value="operator">Operación</option></select></label><label>Estación <select id="event-station"><option value="all">Toda la cuenca</option></select></label></div><ol id="event-list" class="event-list"></ol></section>
 </div>
 
-<footer><span>ALERTA RÍO <span class="footer-dot">/</span> Rally Latinoamericano de Innovación 2026</span><p id="disclaimer">Demostración conceptual. No es un sistema de alerta real.</p></footer>
+<footer><span>NODAL <span class="footer-dot">/</span> Rally Latinoamericano de Innovación 2026</span><p id="disclaimer">Demostración conceptual. No es un sistema de alerta real.</p></footer>
 </div>
 </main>
 <script src="../assets/vendor/leaflet/leaflet.js"></script><script src="../assets/vendor/chartjs/chart.umd.js"></script><script type="module" src="../assets/js/operadores/main.js"></script>

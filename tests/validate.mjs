@@ -6,6 +6,8 @@ import { dirname, join, resolve, relative } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { buildModel, snapshotAt, STATUS_ORDER } from '../site/assets/js/core/engine.js';
 import { createController, STORAGE_KEY } from '../site/assets/js/core/controller.js';
+import { loraLink, networkSummary, sirens } from '../site/assets/js/core/derived.js';
+import * as telemetry from '../site/assets/js/nodo/telemetry.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -76,6 +78,35 @@ check('el registro de eventos crece con t', snaps[0].events.length < snaps[200].
 check('alertas activas coherentes con el sistema', snaps[360].alerts[0].severity === 3 && snaps[0].alerts.length === 0);
 check('sin NaN/undefined en snapshots', !snaps.some((s) => /NaN|undefined/.test(JSON.stringify(s))));
 check('marcadores de línea temporal presentes', model.markers.length >= 5 && model.markers.some((m) => m.kind === 'forecast'));
+
+
+/* ---------------------------------------------------------------- derivados: LoRa, sirenas, telemetría del nodo */
+section('Derivados (LoRa, sirenas) y telemetría del Modo Nodo');
+const sirenAt = (t, zone) => sirens(snaps[t], data.map).find((x) => x.zoneId === zone).state;
+check('sirena de Costanera: reposo → advertencia → activa según el escenario', sirenAt(100, 'Z3') === 'reposo' && sirenAt(200, 'Z3') === 'advertencia' && sirenAt(260, 'Z3') === 'activa');
+check('sirena activa sólo con alerta roja de la zona', snaps.every((s) => sirens(s, data.map).every((x) => (x.state === 'activa') === (s.zones.find((z) => z.id === x.zoneId).severity >= 3))));
+check('sólo zonas urbanas bajas tienen sirena (3)', sirens(snaps[0], data.map).length === 3);
+check('LoRa: E5 sin enlace durante el corte y activo después', loraLink(snaps[215].stations.find((s) => s.id === 'E5')).state === 'sin-enlace' && loraLink(snaps[240].stations.find((s) => s.id === 'E5')).state === 'activo' && loraLink(snaps[170].stations.find((s) => s.id === 'E5')).state === 'debil');
+check('resumen de red: degradada durante el corte, operativa en reposo', networkSummary(snaps[215]).state === 'degradada' && networkSummary(snaps[0]).state === 'activa' && networkSummary(snaps[215]).down === 1);
+const sd = (id) => data.stations.stations.find((x) => x.id === id);
+const nodeAt = (t, id = 'E4') => { const sn = snapshotAt(model, t, { mode: 'simulation' }); const st = sn.stations.find((x) => x.id === id); return { sn, st, m: telemetry.magnet(st, sd(id), sn), mo: telemetry.motion(st, sn), p: telemetry.power(st, sd(id), sn), l: telemetry.lora(st, sn) }; };
+check('telemetría del nodo: determinista (mismo t → mismos valores)', JSON.stringify(nodeAt(137)) === JSON.stringify(nodeAt(137)) && JSON.stringify(nodeAt(137).m) !== JSON.stringify(nodeAt(138).m));
+check('telemetría sin NaN y en rangos plausibles', [0, 64, 130, 200, 249, 360].every((t) => { const n = nodeAt(t); return !/NaN|undefined/.test(JSON.stringify([n.m.uT, n.mo, n.p, n.l.seq, n.l.lastClock])) && n.m.uT > 40 && n.m.uT < 80 && Math.abs(n.mo.roll) < 4 && n.mo.quality.pct >= 0 && n.mo.quality.pct <= 100; }));
+check('µT crece cualitativamente con la crecida (señal ilustrativa, no calibrada)', nodeAt(300).m.uT > nodeAt(0).m.uT + 8);
+check('solar: carga de día, nada de noche', nodeAt(-60).p.solarW > 0 && nodeAt(120).p.solarW === 0);
+check('batería de E2: aviso baja → crítica coherente con el motor', nodeAt(230, 'E2').p.state === 'baja' && nodeAt(355, 'E2').p.state === 'critica');
+check('LoRa del nodo: paquetes en cola y lectura congelada durante el corte de E5', nodeAt(215, 'E5').l.queued >= 2 && nodeAt(215, 'E5').l.link.state === 'sin-enlace' && nodeAt(240, 'E5').l.queued === 0);
+check('sacudidas por ráfagas se acumulan con el tiempo', nodeAt(50).mo.gusts.count === 0 && nodeAt(135).mo.gusts.count === 3 && nodeAt(300).mo.gusts.count === 5);
+check('el nodo no usa Math.random', !/Math\.random/.test(rd('site/assets/js/nodo/telemetry.js')));
+
+/* ---------------------------------------------------------------- marca Nodal */
+section('Marca Nodal');
+const pages = { '/': 'site/index.html', '/operadores/': 'site/operadores/index.html', '/nodo/': 'site/nodo/index.html' };
+for (const [route, file] of Object.entries(pages)) {
+  const h = rd(file);
+  const title = /<title>([^<]*)<\/title>/.exec(h)?.[1] ?? '';
+  check(`${route}: <title> con marca Nodal y sin denominaciones anteriores`, /^Nodal/.test(title) && !/Alerta R[ií]o/i.test(h), `(${title})`);
+}
 
 /* ---------------------------------------------------------------- sincronización */
 section('Sincronización entre pestañas (storage + BroadcastChannel simulados)');

@@ -404,3 +404,6 @@ h2 { font-size: clamp(1.7rem, 4.2vw, 2.5rem); font-weight: 800; letter-spacing: 
   .map__rain { display: none; }
   .stn[data-status="naranja"] .stn__pulse, .stn[data-status="roja"] .stn__pulse { opacity: .3; transform: scale(1.5); }
 }
+
+.how__more { margin: 28px 0 0; font-size: .92rem; color: var(--ar-muted); }
+.how__more a { color: var(--ar-water-deep); font-weight: 600; text-underline-offset: 3px; }

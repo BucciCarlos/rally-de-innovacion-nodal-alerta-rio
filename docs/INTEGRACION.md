@@ -16,3 +16,14 @@ Texto prospectivo tras el cruce crítico · `sinceT` nulo en alertas de predicci
 ## Pendientes menores
 - Mapa público denso alrededor de Costanera/Loma Alta (etiquetas de zona parcialmente tapadas por marcadores).
 - Operadores selecciona E1 por defecto (no la estación crítica) hasta que el usuario elige otra.
+
+---
+
+# Fase Nodal: marca + Modo Nodo (tercera vista)
+
+- **Marca:** «Nodal» en títulos, cabeceras, pie y metadatos de las tres vistas (nuevo isotipo de red de nodos en SVG, favicon actualizado). Se conservaron claves internas (`alertaRio.sim.v1`, `alerta-rio-sim`), rutas, carpetas, worktrees e historial.
+- **Modo Nodo (`/nodo/`)**: pantalla de celular Android reutilizado (marco centrado en escritorio, a pantalla completa en móvil) con identidad/estado, nivel + magnetómetro (experimental, sin calibración), acelerómetro/giroscopio, energía y transmisión LoRa (conceptual). Usa `createSimulation()` y el widget compartido; telemetría extra determinista en `js/nodo/telemetry.js`.
+- **Núcleo:** `core/derived.js` (enlace LoRa, red, sirenas conceptuales). El motor no se modificó en esta fase. Etiquetas de sensores actualizadas en `data/stations.json` (nivel = flotador + imán/magnetómetro; movimiento = acelerómetro y giroscopio).
+- **Operadores:** «Ver nodo ↗» (otra pestaña) y bloque compacto «Red LoRa · Gateway» + «Sirenas barriales simuladas» dentro de «Salud de la red».
+- **Pública:** sólo marca y un enlace secundario al Modo Nodo en «Cómo funciona». Sin paneles técnicos.
+- **Pruebas:** `validate.mjs` 66/66 (derivados, telemetría determinista, marca); `browser-smoke.mjs` 13/13 con tres vistas sincronizadas; auditoría con tres pestañas reales de Chrome (activar/play/pausa/retroceso/slider/velocidad/recarga, minutos 0–360, E5 sin enlace, E2 batería crítica, sirena activa a t=260), sin errores de consola ni 404, sin desbordes a 360/768/1440 px.

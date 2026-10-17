@@ -1,6 +1,6 @@
-# Alerta Río — reglas para agentes (Codex CLI / Claude Code)
+# Nodal — reglas para agentes (Codex CLI / Claude Code)
 
-Mockup web **conceptual** para el Rally Latinoamericano de Innovación 2026: celulares en desuso como estaciones de monitoreo
+Mockup web **conceptual** (marca: **Nodal**) para el Rally Latinoamericano de Innovación 2026: celulares en desuso como estaciones de monitoreo
 hídrico. **Todos los datos y predicciones son sintéticos y deben verse rotulados como simulados.** No es un sistema de alertas real.
 
 ## Antes de tocar nada
@@ -11,8 +11,9 @@ hídrico. **Todos los datos y predicciones son sintéticos y deben verse rotulad
 ## Territorio exclusivo (nadie más edita tus archivos; vos no editás los ajenos)
 | Dueño | Archivos |
 |---|---|
-| **Núcleo** (coordinador, rama `main`) | `site/assets/js/core/**`, `site/assets/css/{base,fonts,sim-controls}.css`, `site/data/**`, `site/assets/{vendor,fonts}/**`, `site/assets/img/favicon.svg`, `tests/**`, `tools/**`, `docs/**` (salvo `docs/requests/*`), `netlify.toml`, `package.json`, `README.md`, `AGENTS.md`, `CLAUDE.md` |
+| **Núcleo** (coordinador, rama `main`) | `site/assets/js/core/**` (incluye `derived.js`), `site/assets/css/{base,fonts,sim-controls}.css`, `site/data/**`, `site/assets/{vendor,fonts}/**`, `site/assets/img/favicon.svg`, `tests/**`, `tools/**`, `docs/**` (salvo `docs/requests/*`), `netlify.toml`, `package.json`, `README.md`, `AGENTS.md`, `CLAUDE.md` |
 | **`feat/publico`** | `site/index.html`, `site/assets/css/publico.css`, `site/assets/js/publico/**`, `site/assets/img/publico/**`, `docs/requests/publico.md` |
+| **Modo Nodo** (`site/nodo/`) | `site/nodo/**`, `site/assets/css/nodo.css`, `site/assets/js/nodo/**`, `site/assets/img/nodo/**`, `docs/requests/nodo.md` |
 | **`feat/operadores`** | `site/operadores/**`, `site/assets/css/operadores.css`, `site/assets/js/operadores/**`, `site/assets/img/operadores/**`, `docs/requests/operadores.md` |
 
 Podés crear archivos nuevos **dentro** de tu territorio. Verificalo con `node tests/check-ownership.mjs <publico|operadores>`.

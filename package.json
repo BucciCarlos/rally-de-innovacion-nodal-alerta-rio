@@ -1,8 +1,8 @@
 {
-  "name": "alerta-rio",
+  "name": "nodal",
   "version": "0.1.0",
   "private": true,
-  "description": "Alerta Río — mockup web conceptual (datos sintéticos) para el Rally Latinoamericano de Innovación 2026",
+  "description": "Nodal — mockup web conceptual (datos sintéticos) para el Rally Latinoamericano de Innovación 2026",
   "type": "module",
   "scripts": {
     "serve": "python3 -m http.server 8000 --directory site",

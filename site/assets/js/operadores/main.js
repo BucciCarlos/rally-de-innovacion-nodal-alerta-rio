@@ -8,6 +8,7 @@ import { createCharts } from './charts.js';
 import { createAlerts } from './alerts.js';
 import { createDevices } from './devices.js';
 import { createEventLog } from './eventlog.js';
+import { createNetwork } from './network.js';
 
 try {
   const sim = await createSimulation();
@@ -21,7 +22,7 @@ try {
     render(latest);
   };
   const renderStations = createStations(sim, select), renderDevices = createDevices(sim, select);
-  const renderEvents = createEventLog(sim), renderAlerts = createAlerts(sim);
+  const renderEvents = createEventLog(sim), renderAlerts = createAlerts(sim), renderNetwork = createNetwork(sim);
   $('dashboard').hidden = false;
   const map = createMap(sim, select), charts = createCharts(sim);
   mountSimControls($('sim-slot'), sim, { variant: 'inline' });
@@ -38,7 +39,7 @@ try {
     text('weather-condition', snap.weather.condition);
     html($('weather'), [['Lluvia actual', `${number(snap.weather.rainMmH, 1)} mm/h`], ['Acumulada · 3 h', `${number(snap.weather.rain3hMm, 1)} mm`], ['Prevista · 6 h', `${number(snap.weather.rainNext6hMm, 1)} mm`], ['Viento', `${number(snap.weather.windKmh)} km/h`], ['Presión', `${number(snap.weather.pressureHpa)} hPa`], ['Temperatura', `${number(snap.weather.tempC, 1)} °C`]].map(([label, value]) => `<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join(''));
     renderStations(snap, selected); map.render(snap, selected); charts.render(snap, selected);
-    renderAlerts(snap); renderDevices(snap, selected); renderEvents(snap);
+    renderAlerts(snap); renderDevices(snap, selected); renderNetwork(snap, selected); renderEvents(snap);
     text('disclaimer', snap.disclaimer);
   }
   sim.subscribe(render);
