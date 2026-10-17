@@ -30,7 +30,7 @@ const port = server.address().port;
 const profile = mkdtempSync(join(tmpdir(), 'alertario-chrome-'));
 // spawn ASÍNCRONO: el servidor HTTP de este mismo proceso debe seguir atendiendo mientras corre Chrome.
 const r = await new Promise((done) => {
-  const child = spawn(chrome, ['--headless=new', '--no-sandbox', '--disable-gpu', `--user-data-dir=${profile}`, '--virtual-time-budget=30000',
+  const child = spawn(chrome, ['--headless=new', '--no-sandbox', '--disable-gpu', `--user-data-dir=${profile}`, '--virtual-time-budget=70000',
     '--dump-dom', `http://127.0.0.1:${port}/tests/browser/sync-harness.html`]);
   let stdout = '', stderr = '';
   child.stdout.on('data', (d) => { stdout += d; });

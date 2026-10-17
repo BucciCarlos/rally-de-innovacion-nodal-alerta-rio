@@ -138,6 +138,18 @@ section('Marcadores del mapa público (compactos, con área de toque suficiente)
   check('marcadores escalan con el zoom (variable --mk) y los colores de nivel siguen siendo tokens', /--mk/.test(css) && /map\.on\('zoom'/.test(rd('site/assets/js/publico/map/index.js')) && !/#(1f9d6b|16845a|e8b400|ef7b12|d62839)/i.test(css));
 }
 
+
+/* ---------------------------------------------------------------- geometría estable de la tarjeta de estado */
+section('Tarjeta de estado: geometría estable entre estados');
+{
+  const html = rd('site/index.html'), css = rd('site/assets/css/publico.css');
+  check('el recuadro de previsión y el titular reservan el espacio del contenido más extenso (duplicados invisibles aria-hidden)', /class="outlook__ghost" aria-hidden="true"/.test(html) && /status__ghost" aria-hidden="true"/.test(html) && /\.outlook__ghost \{[^}]*visibility: hidden/.test(css));
+  const blocks = [...css.matchAll(/(?:^|\n)\s*(\.outlook(?:\[[^\]]+\])*|\.outlook__live|\.outlook__ghost|\.status__hl|\.status__ghost)\s*\{([^}]*)\}/g)];
+  check('no hay alturas fijas en el recuadro ni en el titular (nada se recorta)', blocks.length >= 4 && blocks.every((b) => !/(^|[\s;])(height|max-height)\s*:/.test(b[2])));
+  check('la alerta roja ya no ensancha el panel ni agranda el titular (geometría constante)', !/data-status="roja"\] \{ --panel-w/.test(css) && !/data-status="roja"\] \.status__headline \{ font-size/.test(css));
+  check('la entrada del mensaje de previsión no desplaza el recuadro', /\.outlook\.swap\[data-pre="false"\] \{ animation: fadeIn/.test(css));
+}
+
 /* ---------------------------------------------------------------- derivados: LoRa, sirenas, telemetría del nodo */
 section('Derivados (LoRa, sirenas) y telemetría del Modo Nodo');
 const sirenAt = (t, zone) => sirens(snaps[t], data.map).find((x) => x.zoneId === zone).state;

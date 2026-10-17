@@ -39,6 +39,12 @@ async function waitFor(fn, ms = 8000) { const t0 = Date.now(); while (Date.now()
     ok('avanzar desde el nodo mueve las otras dos', await waitFor(() => q('pub', '.simctl__clock').textContent === q('nodo', '.simctl__clock').textContent && q('ops', '.simctl__clock').textContent === q('nodo', '.simctl__clock').textContent && q('ops', '.simctl__clock').textContent !== frozen));
     q('pub', '[data-act="reset"]').click();
     ok('reiniciar en pública reinicia operadores y nodo', await waitFor(() => /\+0 min/.test(q('ops', '.simctl__clock').textContent) && /\+0 min/.test(q('nodo', '.simctl__clock').textContent)));
+    // Geometría estable de la vista pública entre estados (sin saltos al pasar de naranja a roja)
+    const geo = async (v) => { const r = q('pub', '.simctl__range'); r.value = v; r.dispatchEvent(new Event('input', { bubbles: true })); await sleep(900); const top = (sel) => Math.round(q('pub', sel).getBoundingClientRect().top * 2) / 2; return [q('pub', '#estado').dataset.status, top('#outlook'), top('#map'), Math.round(q('pub', '#outlook').getBoundingClientRect().height)]; };
+    const g = []; for (const v of [140, 200, 248, 249, 300]) g.push(await geo(v));
+    ok(`la vista pública no cambia de geometría entre estados (${g.map((x) => x.join('/')).join(' · ')})`, new Set(g.map((x) => x[0])).size >= 3 && g.every((x) => x[1] === g[0][1] && x[2] === g[0][2] && x[3] === g[0][3]));
+    q('pub', '[data-act="reset"]').click();
+    await sleep(400);
     q('ops', '.simctl__toggle').click();
     ok('apagar en operadores apaga pública y nodo', await waitFor(() => q('pub', '.simctl__toggle').getAttribute('aria-pressed') === 'false' && q('nodo', '.simctl__toggle').getAttribute('aria-pressed') === 'false'));
   } catch (e) { log.push('FAIL excepción: ' + e.message); }

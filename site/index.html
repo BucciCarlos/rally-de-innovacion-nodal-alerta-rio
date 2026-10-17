@@ -40,7 +40,10 @@
             <div class="status__badge" id="status-badge" aria-hidden="true"></div>
             <div class="status__titles">
               <p class="status__label"><span class="status__dot" aria-hidden="true"></span><span id="status-label">Normal</span><span class="status__clock" id="status-clock"></span></p>
-              <h1 class="status__headline" id="status-title">Consultando el estado del río…</h1>
+              <div class="status__hl">
+                <h1 class="status__headline" id="status-title">Consultando el estado del río…</h1>
+                <span class="status__headline status__ghost" aria-hidden="true">El río está subiendo: mantenete informado</span>
+              </div>
             </div>
           </div>
           <div class="status__body">
@@ -51,6 +54,7 @@
             </ul>
           </div>
           <div class="outlook" id="outlook" data-pre="false" data-status="normal">
+            <div class="outlook__live">
               <p class="outlook__top">
                 <span class="outlook__tag"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7.5A4.500 4.500 0 1 0 16.500 12"/><path d="M12 12l6.500-6.500"/></svg>Previsión · estimación simulada</span>
                 <span class="outlook__conf" id="outlook-conf" hidden></span>
@@ -64,6 +68,12 @@
                 </div>
               </div>
             </div>
+            <div class="outlook__ghost" aria-hidden="true">
+              <p class="outlook__top"><span class="outlook__tag"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7.5A4.500 4.500 0 1 0 16.500 12"/><path d="M12 12l6.500-6.500"/></svg>Previsión · estimación simulada</span><span class="outlook__conf">Confianza media</span></p>
+              <p class="outlook__msg">Predicción simulada: posible nivel crítico (alerta roja) en Costanera Villa Serena en aprox. 1 h 58 min (confianza media).</p>
+              <div class="outlook__eta"><p class="outlook__eta-line">Podría llegar <strong>1 h 58 min</strong></p><div class="outlook__bar"></div></div>
+            </div>
+          </div>
 
             <p class="status__hint" id="status-hint" hidden>
               <span>Estás viendo un día tranquilo.</span>
