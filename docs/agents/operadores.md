@@ -1,5 +1,7 @@
 # Brief — Vista de operadores (`feat/operadores`)
 
+> **Documentación histórica.** Corresponde a la fase de desarrollo multiagente inicial (ya concluida): las ramas, los worktrees y las rutas locales que se mencionan fueron propios de ese proceso. No son instrucciones vigentes; las reglas actuales están en [AGENTS.md](../../AGENTS.md) y el contexto en [DESARROLLO-ASISTIDO-IA.md](../DESARROLLO-ASISTIDO-IA.md).
+
 Leé primero `AGENTS.md` y `docs/CONTRATO-SIMULACION.md`. Ya existe una base ejecutable con un **placeholder** que debés reemplazar.
 
 ## Tu territorio

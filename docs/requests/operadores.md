@@ -1,5 +1,7 @@
 # Vista de operadores — implementación y pedidos al núcleo
 
+> **Documentación histórica.** Informe de un agente de la fase de desarrollo multiagente inicial (ya concluida), con los pedidos al núcleo y su resolución. No son instrucciones vigentes; ver [AGENTS.md](../../AGENTS.md) y [DESARROLLO-ASISTIDO-IA.md](../DESARROLLO-ASISTIDO-IA.md).
+
 ## Implementado
 
 - Centro de operaciones oscuro con panorama de cuenca, niveles observados, contadores, reloj y anticipación simulada destacada.

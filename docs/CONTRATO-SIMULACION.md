@@ -1,7 +1,7 @@
 # Contrato de la simulación
 
-Única fuente de verdad para las dos vistas. **Todo es sintético**: no hay datos reales, ni modelo de IA, ni notificaciones.
-Implementación: `site/assets/js/core/` (archivos del núcleo, de sólo lectura para los agentes de vista).
+Única fuente de verdad para las tres vistas (portal ciudadano, centro de operaciones y Modo Nodo). **Todo es sintético**: no hay datos reales, ni modelo de IA, ni notificaciones.
+Implementación: `site/assets/js/core/` (módulos compartidos: modificarlos afecta a las tres vistas).
 
 ## 1. Cómo se usa (3 líneas)
 
@@ -159,6 +159,6 @@ Se carga como dato opcional (`sim.data.scenery`; si falta, los mapas funcionan i
 
 ## 9. Cambios al contrato
 
-Sólo el coordinador (rama `main`, archivos del núcleo) modifica `core/`, `data/`, `base.css`, `sim-controls.css`.
-Si necesitás un campo nuevo, un color, otro texto o un bug arreglado: escribilo en `docs/requests/<tu-rol>.md` (archivo tuyo) con
-"qué necesitás y para qué" y seguí con un workaround local; el coordinador lo integra en `main` y vos hacés `git merge main`.
+Los módulos compartidos (`core/`, `data/`, `base.css`, `sim-controls.css`) son la base común de las tres vistas. Antes de cambiarlos:
+evaluá el impacto en cada vista y en la sincronización entre pestañas, actualizá este documento y las pruebas (`tests/validate.mjs`),
+y verificá las tres rutas en el navegador. Mantené la compatibilidad de la API y de los campos del snapshot salvo que el cambio sea deliberado y esté documentado.

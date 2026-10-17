@@ -1,5 +1,7 @@
 # Cómo iniciar a cada agente
 
+> **Documentación histórica.** Corresponde a la fase de desarrollo multiagente inicial (ya concluida): las ramas, los worktrees y las rutas locales que se mencionan fueron propios de ese proceso. No son instrucciones vigentes; las reglas actuales están en [AGENTS.md](../../AGENTS.md) y el contexto en [DESARROLLO-ASISTIDO-IA.md](../DESARROLLO-ASISTIDO-IA.md).
+
 Worktrees (carpetas hermanas del repo principal, cada una con su rama):
 
 | Rol | Rama | Carpeta | Herramienta sugerida |

@@ -1,5 +1,7 @@
 # Pedidos al núcleo — vista pública
 
+> **Documentación histórica.** Informe de un agente de la fase de desarrollo multiagente inicial (ya concluida), con los pedidos al núcleo y su resolución. No son instrucciones vigentes; ver [AGENTS.md](../../AGENTS.md) y [DESARROLLO-ASISTIDO-IA.md](../DESARROLLO-ASISTIDO-IA.md).
+
 ## Resumen del trabajo (feat/publico)
 **Hecho:** portal ciudadano completo en `site/index.html` + `assets/css/publico.css` + `assets/js/publico/**`.
 - Héroe: mapa Leaflet esquemático (río con tramos coloreados por estado, halo de crecida y flujo animado, barrios con relleno + textura por nivel, estaciones con forma/icono/texto, puntos seguros destacados, lluvia y viñeta de alerta) + tarjeta de estado (titular, tendencia, previsión simulada con cuenta regresiva) + "Qué hacer ahora".

@@ -1,5 +1,7 @@
 # Integración y auditoría final
 
+> **Documentación histórica.** Registro de las integraciones, auditorías y correcciones realizadas durante el desarrollo, en orden cronológico. Los nombres de ramas y commits corresponden a ese proceso; el estado vigente del proyecto está en el [README](../README.md) y en [AGENTS.md](../AGENTS.md). Contexto: [DESARROLLO-ASISTIDO-IA.md](DESARROLLO-ASISTIDO-IA.md).
+
 Merges en `main` (historial preservado): `feat/publico` (86f07fe) y `feat/operadores` (2cf0855) sobre la base 71df203. Territorios disjuntos: sin conflictos.
 
 ## Auditoría con navegador real (Chrome, dos pestañas del mismo contexto/origen)
