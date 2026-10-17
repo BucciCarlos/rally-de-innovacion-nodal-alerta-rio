@@ -17,6 +17,7 @@ const hero = $('#estado');
 
 async function start() {
   const sim = await createSimulation();
+  window.addEventListener('pagehide', (event) => { if (!event.persisted) sim.destroy(); });
   mountSimControls($('#sim-slot'), sim, { variant: 'dock' });
   buildLegend($('#legend'), sim);
 

@@ -18,7 +18,7 @@ export function createFacts(root) {
       setText(f.net.v, `${snap.stations.length - offline} de ${snap.stations.length}`);
       setText(f.net.s, offline ? `${offline} sin conexión: se usa su última lectura` : 'Todas transmitiendo');
       setText(f.time.v, snap.clock);
-      setText(f.time.s, snap.mode === 'baseline' ? 'Estado previo a la lluvia' : `Escenario simulado · ${snap.elapsedLabel}`);
+      setText(f.time.s, `Hora simulada · ${snap.elapsedLabel}`);
     }
   };
 }

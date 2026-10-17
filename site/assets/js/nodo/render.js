@@ -40,7 +40,7 @@ export function renderNode(snap, st, sd, levels) {
 
 export function renderStatusBar(snap, st) {
   const d = st.device;
-  setText('sb-clock', snap.clock);
+  setText('sb-clock', `${snap.clock} simulada`);
   setText('sb-batt-pct', `${d.battery}%`);
   $('sb-batt-fill').style.width = `${d.battery}%`;
   $('card-node').closest('.screen').dataset.battery = d.batteryState;

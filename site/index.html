@@ -33,7 +33,7 @@
     <p id="load-error" class="load-error" role="alert" hidden>No se pudo cargar la simulación. Abrí la página desde un servidor local (ver README) y recargá.</p>
 
     <!-- HÉROE: estado + mapa + qué hacer. data-status/mode/pre los actualiza main.js -->
-    <section class="hero" id="estado" data-status="normal" data-mode="baseline" data-pre="false" aria-label="Estado del río y mapa">
+    <section class="hero" id="estado" data-status="normal" data-mode="simulation" data-pre="false" aria-label="Estado del río y mapa">
       <div class="hero__panel">
         <section class="status" id="status" data-status="normal" aria-labelledby="status-title">
           <div class="status__head">
@@ -76,8 +76,8 @@
           </div>
 
             <p class="status__hint" id="status-hint" hidden>
-              <span>Estás viendo un día tranquilo.</span>
-              <button type="button" id="hint-start" class="hint-btn">Ver un escenario de crecida</button>
+              <span>Explorá el tiempo simulado.</span>
+              <button type="button" id="hint-start" class="hint-btn">Abrir línea de tiempo</button>
             </p>
         </section>
 

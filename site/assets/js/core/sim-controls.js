@@ -29,12 +29,12 @@ export function mountSimControls(container, sim, { variant = 'dock' } = {}) {
   root.className = `simctl simctl--${variant}`;
   root.dataset.enabled = 'false';
   root.innerHTML = `
-    <button type="button" class="simctl__toggle" aria-pressed="false" aria-controls="simctl-panel-${variant}" title="Activar o desactivar el modo simulación">
+    <button type="button" class="simctl__toggle" aria-pressed="false" aria-expanded="false" aria-controls="simctl-panel-${variant}" title="Mostrar u ocultar los controles de la línea de tiempo">
       <span class="simctl__icon">${svg('flask')}</span>
-      <span class="simctl__toggle-label">Simulación</span>
+      <span class="simctl__toggle-label">Línea de tiempo</span>
       <span class="simctl__switch" aria-hidden="true"><span></span></span>
     </button>
-    <div class="simctl__panel" id="simctl-panel-${variant}" role="group" aria-label="Controles de la simulación" hidden>
+    <div class="simctl__panel" id="simctl-panel-${variant}" role="group" aria-label="Controles del tiempo simulado" hidden>
       <div class="simctl__buttons">
         <button type="button" data-act="reset" class="simctl__btn" aria-label="Reiniciar" title="Reiniciar">${svg('reset')}</button>
         <button type="button" data-act="back" class="simctl__btn" aria-label="Retroceder ${tl.stepMin} minutos" title="Retroceder ${tl.stepMin} min">${svg('back')}</button>
@@ -91,14 +91,15 @@ export function mountSimControls(container, sim, { variant = 'dock' } = {}) {
     const s = snap.sim;
     root.dataset.enabled = String(s.enabled);
     toggle.setAttribute('aria-pressed', String(s.enabled));
+    toggle.setAttribute('aria-expanded', String(s.enabled));
+    if (!s.enabled && panel.contains(document.activeElement)) toggle.focus({ preventScroll: true });
     panel.hidden = !s.enabled;
-    if (!s.enabled) return;
     playBtn.innerHTML = s.playing ? svg('pause') : svg('play');
     playBtn.setAttribute('aria-label', s.playing ? 'Pausar' : (s.ended ? 'Repetir' : 'Reproducir'));
     if (document.activeElement !== speedSel) speedSel.value = String(s.speed);
     range.value = String(Math.round(s.t));
     range.style.setProperty('--p', `${(s.t / s.max) * 100}%`);
-    clock.textContent = `${snap.clock} · ${snap.elapsedLabel}`;
+    clock.textContent = `${snap.clock} · ${snap.elapsedLabel} · Hora simulada`;
     const lvl = snap.system.level;
     phase.textContent = lvl.label;
     phase.dataset.status = snap.system.status;

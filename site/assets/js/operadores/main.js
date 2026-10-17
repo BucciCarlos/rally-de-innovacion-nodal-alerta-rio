@@ -31,10 +31,10 @@ try {
     latest = snap;
     status($('global-status'), snap.system.status, sim.levels);
     status($('mobile-global-status'), snap.system.status, sim.levels);
-    text('mode-label', snap.mode === 'baseline' ? 'Estado base — activá la simulación' : `Escenario simulado · ${snap.sim.playing ? 'en reproducción' : snap.sim.ended ? 'finalizado' : 'en pausa'}`);
+    text('mode-label', `Escenario simulado · ${snap.sim.playing ? 'en reproducción' : snap.sim.ended ? 'finalizado' : 'en pausa'}`);
     text('global-trend', `${TREND[snap.system.trend].arrow} ${TREND[snap.system.trend].label} · ${fmtRate(snap.system.rateCmH)}`);
     text('clock', `${snap.clock}${snap.dayOffset ? ' +1 día' : ''}`);
-    text('elapsed', snap.mode === 'baseline' ? 'Previo a la lluvia' : snap.elapsedLabel);
+    text('elapsed', snap.elapsedLabel);
     html($('counts'), Object.entries(snap.system.counts).map(([key, count]) => `<div data-status="${key}"><strong>${number(count)}</strong><span>${symbols[key]} ${esc(sim.levels[key].shortLabel || sim.levels[key].label)}</span></div>`).join(''));
     text('weather-condition', snap.weather.condition);
     html($('weather'), [['Lluvia actual', `${number(snap.weather.rainMmH, 1)} mm/h`], ['Acumulada · 3 h', `${number(snap.weather.rain3hMm, 1)} mm`], ['Prevista · 6 h', `${number(snap.weather.rainNext6hMm, 1)} mm`], ['Viento', `${number(snap.weather.windKmh)} km/h`], ['Presión', `${number(snap.weather.pressureHpa)} hPa`], ['Temperatura', `${number(snap.weather.tempC, 1)} °C`]].map(([label, value]) => `<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join(''));

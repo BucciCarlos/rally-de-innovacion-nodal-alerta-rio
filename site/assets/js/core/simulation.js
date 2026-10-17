@@ -45,7 +45,7 @@ export async function createSimulation(opts = {}) {
   }, opts.controllerDeps);
 
   const build = (view) => ({
-    ...snapshotAt(model, view.t, { mode: view.enabled ? 'simulation' : 'baseline' }),
+    ...snapshotAt(model, view.t, { mode: 'simulation' }),
     sim: view
   });
 
@@ -74,7 +74,7 @@ export async function createSimulation(opts = {}) {
     getSnapshot: () => build(ctrl.getState()),
     /** Snapshot de un minuto cualquiera, sin tocar el estado compartido (p. ej. para previsualizar). */
     snapshotAt: (t) => snapshotAt(model, t, { mode: 'simulation' }),
-    /** Suscripción: fn(snapshot, reason). reason ∈ init|tick|play|pause|seek|step|reset|speed|enable|disable|remote */
+    /** Suscripción: fn(snapshot, reason). reason ∈ init|tick|play|pause|seek|step|reset|speed|enable|disable|remote|ended|restore */
     subscribe(fn, { immediate = true } = {}) {
       subscribers.add(fn);
       if (immediate) fn(build(ctrl.getState()), 'init');

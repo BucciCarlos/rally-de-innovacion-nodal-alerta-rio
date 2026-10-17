@@ -37,7 +37,7 @@ try {
     renderMotion(snap, st);
     renderPower(snap, st, sd);
     renderLora(snap, st);
-    setText('sim-mode', snap.mode === 'baseline' ? 'Estado base — activá la simulación' : `Escenario simulado · ${snap.sim.playing ? 'en reproducción' : snap.sim.ended ? 'finalizado' : 'en pausa'} · ${snap.clock}`);
+    setText('sim-mode', `Escenario simulado · ${snap.sim.playing ? 'en reproducción' : snap.sim.ended ? 'finalizado' : 'en pausa'} · ${snap.clock} (hora simulada)`);
     setText('nd-disclaimer', snap.disclaimer);
   }
   sim.subscribe(render);

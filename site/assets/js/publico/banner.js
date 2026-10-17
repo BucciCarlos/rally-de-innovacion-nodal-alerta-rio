@@ -47,9 +47,9 @@ export function createBanner(root, { onStart }) {
       if (!last.rain) el.rain.innerHTML = `${icon('rain', { size: 18 })}<span></span>`;
       last.rain = true;
       setText(el.rain.lastElementChild, rainTxt);
-      setText(el.clock, snap.mode === 'baseline' ? `· ejemplo` : `· ${snap.clock}`);
+      setText(el.clock, `· ${snap.clock} simulada`);
 
-      el.hint.hidden = snap.mode !== 'baseline';
+      el.hint.hidden = snap.sim.enabled;
       this.outlook(snap);
     },
 

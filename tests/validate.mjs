@@ -5,7 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve, relative } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { buildModel, snapshotAt, STATUS_ORDER } from '../site/assets/js/core/engine.js';
-import { createController, STORAGE_KEY } from '../site/assets/js/core/controller.js';
+import { createController, STORAGE_KEY, SESSION_IDLE_MS } from '../site/assets/js/core/controller.js';
+import { createSimulation } from '../site/assets/js/core/simulation.js';
 import { buildScenery } from '../tools/gen-scenery.mjs';
 import { loraLink, networkSummary, sirens } from '../site/assets/js/core/derived.js';
 import * as telemetry from '../site/assets/js/nodo/telemetry.js';
@@ -197,7 +198,7 @@ function makeWorld() {
   let wall = 1_000_000; const store = new Map(); const storageSubs = new Set(); const chans = new Set();
   const advance = (ms) => { wall += ms; };
   const mk = (origin) => {
-    const timers = [];
+    const timers = new Map(); let timerId = 0;
     const storage = {
       read: () => store.get(STORAGE_KEY) ?? null,
       write: (s) => { store.set(STORAGE_KEY, s); storageSubs.forEach((f) => f.origin !== origin && f.cb(s)); },
@@ -205,15 +206,17 @@ function makeWorld() {
     };
     const channelFactory = () => { const c = { onmessage: null, postMessage(m) { chans.forEach((o) => o !== c && o.onmessage && o.onmessage({ data: JSON.parse(JSON.stringify(m)) })); }, close() { chans.delete(c); } }; chans.add(c); return c; };
     const ctrl = createController({ duration: 360, baselineT: -60, speeds: [1, 2, 4, 8], defaultSpeed: 2, stepMin: 10 },
-      { storage, channelFactory, now: () => wall, origin, setInterval: (f) => { timers.push(f); return timers.length; }, clearInterval: () => {} });
+      { storage, channelFactory, now: () => wall, origin, setInterval: (f) => { timers.set(++timerId, f); return timerId; }, clearInterval: (id) => timers.delete(id) });
+    ctrl.tick = () => [...timers.values()].forEach((f) => f());
+    ctrl.timerCount = () => timers.size;
     return ctrl;
   };
-  return { mk, advance };
+  return { mk, advance, store, wall: () => wall };
 }
 {
   const w = makeWorld();
   const A = w.mk('A'); const B = w.mk('B');
-  check('ambas pestañas arrancan apagadas en t base', !A.getState().enabled && A.getState().t === -60 && B.getState().t === -60);
+  check('ambas pestañas arrancan en t=0, pausadas y con controles cerrados', !A.getState().enabled && !A.getState().playing && A.getState().t === 0 && B.getState().t === 0);
   A.enable();
   check('activar en A activa B', B.getState().enabled && B.getState().t === 0);
   A.play(); w.advance(10_000);
@@ -231,12 +234,63 @@ function makeWorld() {
   A.reset();
   check('reiniciar vuelve a 0 y pausa en ambas', A.getState().t === 0 && !B.getState().playing && B.getState().t === 0);
   A.disable();
-  check('apagar vuelve al estado base en ambas', !B.getState().enabled && B.getState().t === -60);
+  check('cerrar controles conserva el minuto y pausa en ambas', !B.getState().enabled && B.getState().t === 0 && !B.getState().playing);
   const C = w.mk('C');
   check('una pestaña nueva hidrata el estado guardado', C.getState().enabled === false && C.getState().rev === A.getState().rev);
   A.enable(); A.seek(90);
   const D = w.mk('D');
   check('pestaña nueva en medio de la simulación se alinea', D.getState().enabled && D.getState().t === 90);
+}
+
+section('Persistencia y presencia de reproductores');
+{
+  const w = makeWorld(); const A = w.mk('A'); const B = w.mk('B');
+  A.enable(); A.seek(130, { pause: true }); A.disable();
+  check('ocultar y reabrir mantiene exactamente t=130 en las dos pestañas', A.getState().t === 130 && B.getState().t === 130 && (A.enable(), B.getState().t === 130));
+  A.seek(249); A.play(); w.advance(375); A.disable();
+  const frozen = A.getState().t; w.advance(60_000);
+  check('cerrar durante play congela también la fracción del minuto', frozen === 249.75 && B.getState().t === frozen && !A.getState().playing);
+  check('cerrar elimina el único timer de reproducción', A.timerCount() === 0 && B.timerCount() === 0);
+  A.enable(); A.seek(100); A.play(); w.advance(1200); A.tick();
+  const saved = JSON.parse(w.store.get(STORAGE_KEY));
+  check('checkpoint guarda el progreso sin renovar rev ni actividad del usuario', saved.t === 102.4 && saved.rev === A.getState().rev && saved.lastActivityAt === w.wall() - 1200);
+  const C = w.mk('C');
+  check('una pestaña nueva se incorpora a otra que responde reproduciendo', C.getState().playing && Math.abs(C.getState().t - A.getState().t) < 1e-9);
+  A.destroy(); B.destroy(); C.destroy(); w.advance(60_000);
+  const D = w.mk('D');
+  check('sin pestañas vivas no extrapola una reproducción guardada, ni siquiera reciente', !D.getState().playing && D.getState().t === saved.t && D.timerCount() === 0);
+  const E = w.mk('E');
+  check('dos pestañas reabiertas pausadas no se reactivan entre sí', !D.getState().playing && !E.getState().playing && E.getState().t === saved.t);
+  D.seek(359); D.enable(); D.play(); w.advance(1000); D.tick();
+  const ended = JSON.parse(w.store.get(STORAGE_KEY));
+  check('el final se guarda en t=360, pausado y sin timer', ended.t === 360 && !ended.playing && D.getState().ended && D.timerCount() === 0);
+  D.destroy(); E.destroy(); const F = w.mk('F');
+  check('recargar al final conserva t=360 sin reiniciar', F.getState().t === 360 && F.getState().ended && !F.getState().playing);
+  F.reset(); F.disable(); F.seek(249); F.stepBack();
+  check('seek, retroceso y reset no dependen de la visibilidad de los controles', F.getState().t === 239 && !F.getState().enabled && (F.reset(), F.getState().t === 0));
+}
+{
+  const w = makeWorld();
+  const legacy = { v: 1, rev: 8, origin: 'old', updatedAt: w.wall() - 60_000, enabled: true, playing: true, speed: 2, t: 130, anchorWall: w.wall() - 60_000 };
+  w.store.set(STORAGE_KEY, JSON.stringify(legacy)); const A = w.mk('A');
+  check('estado v1 antiguo sin lastActivityAt conserva t y se carga pausado', A.getState().t === 130 && !A.getState().playing && A.getState().rev === 8);
+  A.destroy(); w.advance(SESSION_IDLE_MS - 60_001); const B = w.mk('B');
+  check('antes de las 12 horas aún conserva el minuto', B.getState().t === 130); B.destroy();
+  w.advance(1); const C = w.mk('C');
+  check('exactamente a las 12 horas reinicia en t=0, pausado y controles cerrados', C.getState().t === 0 && !C.getState().playing && !C.getState().enabled && C.getState().rev === 9);
+  C.destroy();
+  w.store.set(STORAGE_KEY, JSON.stringify({ ...legacy, playing: false, enabled: false, t: -120, updatedAt: w.wall() }));
+  const D = w.mk('D'); check('el antiguo baseline negativo se normaliza a t=0', D.getState().t === 0); D.destroy();
+}
+{
+  let raw = null;
+  const sim = await createSimulation({ data, controllerDeps: { storage: { read: () => raw, write: (s) => { raw = s; }, subscribe: () => () => {} }, channelFactory: () => null } });
+  check('fachada inicial: 18:00, normal, tendencia ascendente y modo simulation', sim.getSnapshot().clock === '18:00' && sim.getSnapshot().mode === 'simulation' && sim.getSnapshot().system.status === 'normal' && sim.getSnapshot().system.trend === 'rising');
+  sim.enable(); sim.seek(130, { pause: true }); const before = sim.getSnapshot(); sim.disable();
+  check('cerrar no altera predicción, métricas, alertas ni mapa del snapshot', JSON.stringify({ ...before, sim: null }) === JSON.stringify({ ...sim.getSnapshot(), sim: null }));
+  sim.enable(); sim.seek(249, { pause: true }); sim.disable();
+  check('la fachada mantiene la alerta roja al ocultar los controles', sim.getSnapshot().system.status === 'roja' && sim.getSnapshot().t === 249);
+  sim.destroy();
 }
 {
   // Conflicto: gana la rev mayor

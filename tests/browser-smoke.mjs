@@ -8,6 +8,7 @@ import { tmpdir } from 'node:os';
 import { join, extname, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn, spawnSync } from 'node:child_process';
+import { runTimelineChecks } from './browser/timeline-checks.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.png': 'image/png' };
@@ -38,12 +39,17 @@ const r = await new Promise((done) => {
   const kill = setTimeout(() => child.kill('SIGKILL'), 90000);
   child.on('close', () => { clearTimeout(kill); done({ stdout, stderr }); });
 });
-server.close(); rmSync(profile, { recursive: true, force: true });
+rmSync(profile, { recursive: true, force: true });
 
 const m = /<pre id="result">([\s\S]*?)<\/pre>/.exec(r.stdout || '');
 const body = m ? m[1].replace(/&lt;/g, '<').replace(/&amp;/g, '&') : 'sin resultado\n' + (r.stderr || '').slice(0, 500);
 console.log(body);
 const lines = body.split('\n');
 const fails = lines.filter((l) => l.startsWith('FAIL')).length;
-if (!lines.includes('DONE') || fails > 0 || !lines.some((l) => l.startsWith('PASS'))) { console.log('✘ prueba de navegador fallida'); process.exit(1); }
-console.log(`✔ ${lines.filter((l) => l.startsWith('PASS')).length} verificaciones de navegador correctas`);
+if (!lines.includes('DONE') || fails > 0 || !lines.some((l) => l.startsWith('PASS'))) { server.close(); console.log('✘ prueba de navegador fallida'); process.exit(1); }
+try {
+  const extra = await runTimelineChecks(chrome, `http://127.0.0.1:${port}`);
+  console.log(`✔ ${lines.filter((l) => l.startsWith('PASS')).length + extra} verificaciones de navegador correctas`);
+} catch (error) {
+  console.error('✘ prueba de navegador fallida:', error.message); process.exitCode = 1;
+} finally { server.close(); }
