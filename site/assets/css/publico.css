@@ -494,6 +494,8 @@ h2 { font-weight: 750; letter-spacing: -.02em; }
 .outlook__ghost .outlook__msg { font-size: 1.04rem; font-weight: 700; line-height: 1.3; }
 /* Con el riesgo ya en curso el recuadro conserva su tamaño: el mensaje gana presencia en lugar de dejar un hueco */
 .outlook[data-pre="false"][data-status="naranja"] .outlook__msg, .outlook[data-pre="false"][data-status="roja"] .outlook__msg { font-size: 1.04rem; font-weight: 800; line-height: 1.3; color: var(--ar-ink); }
+/* Sin «anclaje de scroll» en el héroe: al cambiar de estado con la página desplazada (móvil) el navegador reajustaba la posición y la pantalla saltaba 60–100 px */
+.hero { overflow-anchor: none; }
 .status__citizen { min-height: 3em; }
 /* El cambio de mensaje de la previsión sólo funde (sin desplazar 8 px el recuadro) */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

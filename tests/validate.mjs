@@ -147,6 +147,7 @@ section('Tarjeta de estado: geometría estable entre estados');
   const blocks = [...css.matchAll(/(?:^|\n)\s*(\.outlook(?:\[[^\]]+\])*|\.outlook__live|\.outlook__ghost|\.status__hl|\.status__ghost)\s*\{([^}]*)\}/g)];
   check('no hay alturas fijas en el recuadro ni en el titular (nada se recorta)', blocks.length >= 4 && blocks.every((b) => !/(^|[\s;])(height|max-height)\s*:/.test(b[2])));
   check('la alerta roja ya no ensancha el panel ni agranda el titular (geometría constante)', !/data-status="roja"\] \{ --panel-w/.test(css) && !/data-status="roja"\] \.status__headline \{ font-size/.test(css));
+  check('el héroe desactiva el anclaje de scroll (sin saltos de página al cambiar de estado con scroll en móvil)', /\.hero \{ overflow-anchor: none; \}/.test(css));
   check('la entrada del mensaje de previsión no desplaza el recuadro', /\.outlook\.swap\[data-pre="false"\] \{ animation: fadeIn/.test(css));
 }
 
