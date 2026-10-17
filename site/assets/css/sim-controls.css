@@ -1,0 +1,79 @@
+/* Control de simulación compartido (archivo del NÚCLEO). Personalizá sólo vía variables --simctl-*. */
+.simctl {
+  --simctl-bg: rgba(10, 27, 46, .92);
+  --simctl-fg: #eaf3f9;
+  --simctl-muted: #9db4c7;
+  --simctl-accent: #4cc3e8;
+  --simctl-radius: 18px;
+  --simctl-track: linear-gradient(90deg, var(--lvl-normal), var(--lvl-normal));
+  color: var(--simctl-fg);
+  font: 500 .85rem/1.3 var(--font-body, system-ui, sans-serif);
+}
+.simctl svg { fill: currentColor; stroke: none; }
+.simctl__icon svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+.simctl--dock {
+  position: fixed; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); transform: translateX(-50%);
+  z-index: 1200; width: min(560px, calc(100vw - 24px));
+  display: flex; flex-direction: column; align-items: stretch; gap: 8px;
+  pointer-events: none;
+}
+.simctl--dock > * { pointer-events: auto; }
+.simctl--dock .simctl__toggle { align-self: center; }
+.simctl--inline { display: inline-flex; flex-direction: column; gap: 8px; }
+
+.simctl__toggle {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  padding: 6px 10px 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.18);
+  background: var(--simctl-bg); color: var(--simctl-fg); backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-1, 0 4px 12px rgba(0,0,0,.2));
+  opacity: .82; transition: opacity .2s, transform .2s var(--ease, ease);
+}
+.simctl__toggle:hover, .simctl__toggle[aria-pressed="true"] { opacity: 1; }
+.simctl__icon { display: inline-flex; }
+.simctl__switch { width: 30px; height: 18px; border-radius: 999px; background: rgba(255,255,255,.22); position: relative; transition: background .2s; }
+.simctl__switch span { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: transform .2s var(--ease, ease); }
+.simctl__toggle[aria-pressed="true"] .simctl__switch { background: var(--simctl-accent); }
+.simctl__toggle[aria-pressed="true"] .simctl__switch span { transform: translateX(12px); }
+
+.simctl__panel {
+  background: var(--simctl-bg); border: 1px solid rgba(255,255,255,.14); border-radius: var(--simctl-radius);
+  padding: 12px 14px 10px; backdrop-filter: blur(10px); box-shadow: var(--shadow-2, 0 12px 30px rgba(0,0,0,.3));
+  display: grid; gap: 10px;
+}
+.simctl__panel[hidden] { display: none; }
+.simctl__buttons { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.simctl__btn {
+  width: 38px; height: 38px; display: inline-grid; place-items: center; cursor: pointer;
+  border-radius: 12px; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.07); color: var(--simctl-fg);
+  transition: background .15s, transform .15s var(--ease, ease);
+}
+.simctl__btn:hover { background: rgba(255,255,255,.16); }
+.simctl__btn:active { transform: scale(.94); }
+.simctl__btn--primary { width: 46px; background: var(--simctl-accent); color: #04202d; border-color: transparent; }
+.simctl__btn--primary:hover { background: #7ad6f1; }
+.simctl__speed { margin-left: auto; }
+.simctl__speed select {
+  appearance: none; background: rgba(255,255,255,.07); color: var(--simctl-fg);
+  border: 1px solid rgba(255,255,255,.16); border-radius: 10px; padding: 8px 10px; cursor: pointer; font: inherit;
+}
+.simctl__speed select option { color: #10253a; }
+
+.simctl__timeline { position: relative; padding: 6px 0 2px; }
+.simctl__range { -webkit-appearance: none; appearance: none; width: 100%; height: 26px; margin: 0; background: transparent; cursor: pointer; position: relative; z-index: 2; }
+.simctl__range::-webkit-slider-runnable-track { height: 8px; border-radius: 999px; background: var(--simctl-track); opacity: .95; }
+.simctl__range::-moz-range-track { height: 8px; border-radius: 999px; background: var(--simctl-track); opacity: .95; }
+.simctl__range::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -6px; border-radius: 50%; background: #fff; border: 3px solid var(--simctl-bg); box-shadow: 0 0 0 2px #fff, 0 2px 6px rgba(0,0,0,.4); }
+.simctl__range::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 3px solid var(--simctl-bg); box-shadow: 0 0 0 2px #fff; }
+.simctl__markers { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.simctl__mark { position: absolute; top: 2px; width: 2px; height: 8px; background: rgba(255,255,255,.55); transform: translateX(-1px); }
+.simctl__mark--forecast { top: 0; width: 8px; height: 8px; background: var(--c); border: 1.5px solid #fff; transform: translateX(-4px) rotate(45deg); }
+
+.simctl__meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--simctl-muted); }
+.simctl__clock { font-family: var(--font-mono, monospace); color: var(--simctl-fg); font-size: .85rem; }
+.simctl__phase { padding: 1px 10px; border-radius: 999px; background: var(--st, var(--lvl-normal)); color: var(--st-ink, #fff); font-weight: 700; font-size: .75rem; }
+.simctl__badge { margin-left: auto; background: rgba(255,255,255,.1); color: var(--simctl-muted); }
+
+@media (max-width: 480px) {
+  .simctl__badge { margin-left: 0; }
+}

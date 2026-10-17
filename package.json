@@ -1,0 +1,15 @@
+{
+  "name": "alerta-rio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Alerta Río — mockup web conceptual (datos sintéticos) para el Rally Latinoamericano de Innovación 2026",
+  "type": "module",
+  "scripts": {
+    "serve": "python3 -m http.server 8000 --directory site",
+    "test": "node tests/validate.mjs",
+    "test:browser": "node tests/browser-smoke.mjs",
+    "test:all": "node tests/validate.mjs && node tests/browser-smoke.mjs",
+    "gen:map": "node tools/gen-map.mjs"
+  },
+  "license": "UNLICENSED"
+}

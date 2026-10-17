@@ -1,0 +1,9 @@
+/* PLACEHOLDER del núcleo — feat/publico es dueño de este archivo. */
+.pub-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--ar-ink); color: #fff; }
+.pub-ops { margin-left: auto; color: #cfe4f0; font-size: .85rem; }
+.pub-main { padding: 24px 16px 160px; max-width: 900px; margin: 0 auto; }
+.pub-banner { padding: 24px; border-radius: var(--radius-m); background: var(--st); color: var(--st-ink); }
+.pub-banner h1 { font-size: clamp(1.6rem, 5vw, 2.6rem); }
+.pub-list { list-style: none; padding: 0; display: grid; gap: 8px; margin-top: 16px; }
+.pub-list li { display: flex; gap: 10px; align-items: center; }
+.pub-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--st); }

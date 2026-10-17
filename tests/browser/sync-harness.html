@@ -1,0 +1,40 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Harness de sincronización</title>
+<style>iframe{width:48vw;height:300px}</style>
+<iframe id="pub" src="../../site/index.html"></iframe>
+<iframe id="ops" src="../../site/operadores/index.html"></iframe>
+<pre id="result">PENDING</pre>
+<script>
+const log = [];
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const doc = (id) => document.getElementById(id).contentDocument;
+const q = (id, sel) => doc(id).querySelector(sel);
+const ok = (name, cond) => log.push(`${cond ? 'PASS' : 'FAIL'} ${name}`);
+async function waitFor(fn, ms = 8000) { const t0 = Date.now(); while (Date.now() - t0 < ms) { try { if (fn()) return true; } catch {} await sleep(50); } return false; }
+
+(async () => {
+  try {
+    ok('ambas vistas montan el control de simulación', await waitFor(() => q('pub', '.simctl__toggle') && q('ops', '.simctl__toggle')));
+    ok('ambas arrancan con simulación apagada', q('pub', '.simctl__toggle').getAttribute('aria-pressed') === 'false' && q('ops', '.simctl__toggle').getAttribute('aria-pressed') === 'false');
+    q('pub', '.simctl__toggle').click();
+    ok('activar en pública activa operadores', await waitFor(() => q('ops', '.simctl__toggle').getAttribute('aria-pressed') === 'true'));
+    q('pub', '[data-act="play"]').click();
+    await sleep(2500);
+    const cp = q('pub', '.simctl__clock').textContent, co = q('ops', '.simctl__clock').textContent;
+    ok(`reloj avanza y coincide (${cp} | ${co})`, cp === co && !cp.startsWith('18:00 · +0'));
+    q('ops', '[data-act="play"]').click();           // pausar desde operadores
+    ok('pausar en operadores pausa la pública', await waitFor(() => q('pub', '[data-act="play"]').getAttribute('aria-label') === 'Reproducir'));
+    const frozen = q('pub', '.simctl__clock').textContent;
+    await sleep(1200);
+    ok('el tiempo queda congelado en ambas', q('pub', '.simctl__clock').textContent === frozen && q('ops', '.simctl__clock').textContent === frozen);
+    q('ops', '[data-act="forward"]').click();
+    ok('avanzar en operadores mueve la pública', await waitFor(() => q('pub', '.simctl__clock').textContent !== frozen && q('pub', '.simctl__clock').textContent === q('ops', '.simctl__clock').textContent));
+    q('pub', '[data-act="reset"]').click();
+    ok('reiniciar en pública reinicia operadores', await waitFor(() => /\+0 min/.test(q('ops', '.simctl__clock').textContent)));
+    q('ops', '.simctl__toggle').click();
+    ok('apagar en operadores apaga la pública', await waitFor(() => q('pub', '.simctl__toggle').getAttribute('aria-pressed') === 'false'));
+  } catch (e) { log.push('FAIL excepción: ' + e.message); }
+  document.getElementById('result').textContent = 'DONE\n' + log.join('\n');
+})();
+</script>

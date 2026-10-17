@@ -1,0 +1,47 @@
+# Alerta Río — despliegue estático en Netlify (sin build, sin funciones, sin variables de entorno).
+# Conexión: Netlify → Add new site → Import from Git → repo público de GitHub → rama main.
+# Cada push a main publica automáticamente el contenido de /site.
+
+[build]
+  publish = "site"
+  # Sin comando de build: HTML/CSS/JS/JSON estáticos.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=()"
+
+# Datos sintéticos: caché corta para que un push se vea rápido.
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300, must-revalidate"
+
+[[headers]]
+  for = "/assets/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300, must-revalidate"
+
+[[headers]]
+  for = "/assets/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300, must-revalidate"
+
+# /operadores → /operadores/ (por si alguien escribe la URL sin barra final)
+[[redirects]]
+  from = "/operadores"
+  to = "/operadores/"
+  status = 301

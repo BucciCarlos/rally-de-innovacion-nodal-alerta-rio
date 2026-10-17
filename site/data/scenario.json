@@ -1,0 +1,47 @@
+{
+  "_comment": "Escenario sintético de crecida de 6 horas. Todo es simulado.",
+  "id": "crecida-demo-6h",
+  "title": "Crecida del Río Serena — escenario de 6 horas",
+  "river": "Río Serena (ficticio)",
+  "city": "Villa Serena (ficticia)",
+  "startClock": "18:00",
+  "durationMin": 360,
+  "prerollMin": 180,
+  "postrollMin": 180,
+  "baselineT": -60,
+  "stepMin": 10,
+  "defaultSpeed": 2,
+  "speeds": [1, 2, 4, 8],
+  "forecast": {
+    "horizonMin": 180,
+    "stepMin": 15,
+    "preAlertEtaMin": 120,
+    "note": "Predicción SIMULADA: extrapolación sintética con banda de incertidumbre. No hay modelo de aprendizaje automático."
+  },
+  "hydrograph": {
+    "note": "Hidrograma maestro normalizado (0..1). Cada estación lo escala con base+amp y lo desplaza por lagMin.",
+    "points": [
+      [-180, 0], [-60, 0.0], [0, 0.01], [30, 0.04], [60, 0.11], [90, 0.21], [120, 0.32],
+      [150, 0.44], [180, 0.55], [210, 0.65], [240, 0.74], [270, 0.82], [300, 0.89],
+      [330, 0.945], [360, 0.985], [400, 1.0], [440, 0.99], [540, 0.93]
+    ]
+  },
+  "rain": {
+    "note": "Lluvia en mm/h en la cuenca (suavizada). Cada estación la escala con rainFactor.",
+    "points": [
+      [-180, 0], [-40, 0.2], [0, 1.5], [20, 4], [50, 9], [90, 15], [130, 19], [170, 17],
+      [220, 12], [270, 8], [330, 5], [360, 4], [420, 2], [540, 0.5]
+    ]
+  },
+  "weather": {
+    "pressureHpa": [[-180, 1012], [0, 1009], [120, 1003], [240, 1000], [360, 1001], [540, 1006]],
+    "windKmh": [[-180, 8], [0, 14], [120, 34], [240, 28], [360, 22], [540, 12]],
+    "tempC": [[-180, 24], [0, 22], [180, 19], [360, 18], [540, 17]]
+  },
+  "events": [
+    { "t": 0,   "type": "system", "severity": 0, "title": "Inicio del escenario de simulación", "detail": "Comienza el escenario sintético de 6 horas. Datos simulados." },
+    { "t": 15,  "type": "weather", "severity": 0, "title": "Primeras lluvias en la cuenca alta", "detail": "Pluviómetros acústicos de E1 y E2 detectan lluvia (simulada)." },
+    { "t": 45,  "type": "weather", "severity": 1, "title": "Aviso meteorológico simulado: lluvias intensas", "detail": "El parte sintético anticipa precipitaciones persistentes sobre la cuenca." },
+    { "t": 262, "type": "operator", "severity": 2, "title": "Coordinación interinstitucional (simulada)", "detail": "Se registra la apertura de mesa de crisis. No se envían notificaciones reales." }
+  ]
+}

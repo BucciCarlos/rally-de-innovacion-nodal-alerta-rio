@@ -1,0 +1,65 @@
+{
+  "_comment": "Niveles de alerta. Datos 100% sintéticos para una demostración conceptual.",
+  "order": ["normal", "vigilancia", "naranja", "roja"],
+  "levels": {
+    "normal": {
+      "id": "normal", "severity": 0,
+      "label": "Normal", "shortLabel": "Normal",
+      "color": "#1f9d6b", "ink": "#ffffff", "icon": "check",
+      "headline": "El río está en su nivel habitual",
+      "citizen": "No hay riesgo por el río en este momento.",
+      "recommendations": [
+        "No hace falta tomar medidas especiales.",
+        "Podés consultar esta página cuando haya lluvias fuertes.",
+        "Conocé tu ruta de evacuación y el punto de encuentro de tu barrio."
+      ],
+      "operator": "Monitoreo de rutina. Verificar estado de dispositivos."
+    },
+    "vigilancia": {
+      "id": "vigilancia", "severity": 1,
+      "label": "Vigilancia", "shortLabel": "Vigilancia",
+      "color": "#e8b400", "ink": "#231a00", "icon": "eye",
+      "headline": "El río está subiendo: mantenete informado",
+      "citizen": "El nivel crece y se sigue de cerca. Todavía no hay peligro inmediato.",
+      "recommendations": [
+        "Evitá acercarte a la costa y a los cauces.",
+        "Revisá que tengas una linterna, documentos y agua a mano.",
+        "Volvé a mirar esta página en la próxima hora."
+      ],
+      "operator": "Aumentar frecuencia de lectura. Alistar equipos de respuesta."
+    },
+    "naranja": {
+      "id": "naranja", "severity": 2,
+      "label": "Alerta naranja", "shortLabel": "Naranja",
+      "color": "#ef7b12", "ink": "#1f1000", "icon": "warning",
+      "headline": "Alerta naranja: prepará tu salida",
+      "citizen": "El río superó el nivel de alerta. Pueden inundarse zonas bajas.",
+      "recommendations": [
+        "Alejá vehículos y objetos de valor de las zonas bajas.",
+        "Preparate para evacuar: mochila con documentos, medicación y celular cargado.",
+        "Cuidá a niños, personas mayores y mascotas. Avisá a tus vecinos."
+      ],
+      "operator": "Activar protocolo de pre-evacuación en zonas expuestas."
+    },
+    "roja": {
+      "id": "roja", "severity": 3,
+      "label": "Alerta roja", "shortLabel": "Roja",
+      "color": "#d62839", "ink": "#ffffff", "icon": "alert",
+      "headline": "Alerta roja: evacuá las zonas bajas",
+      "citizen": "El río superó el nivel crítico. Hay riesgo para las personas.",
+      "recommendations": [
+        "Si estás en una zona baja, andá ya al punto de encuentro seguro.",
+        "No cruces calles inundadas ni puentes: la corriente es muy peligrosa.",
+        "Seguí las indicaciones de Defensa Civil y Bomberos."
+      ],
+      "operator": "Evacuación en zonas críticas. Coordinar Defensa Civil, Bomberos y salud."
+    }
+  },
+  "outlook": {
+    "calm":     { "label": "Sin cambios previstos",       "citizen": "No se prevén cambios importantes en las próximas horas." },
+    "rising":   { "label": "Se espera más crecida",       "citizen": "Se prevé que el río siga subiendo en las próximas horas." },
+    "warning":  { "label": "Riesgo de alerta naranja",    "citizen": "Podría llegarse al nivel de alerta naranja pronto." },
+    "critical": { "label": "Riesgo de nivel crítico",     "citizen": "Se prevé que el río podría llegar al nivel crítico (alerta roja) en las próximas horas." }
+  },
+  "disclaimer": "DEMOSTRACIÓN CONCEPTUAL. Todos los datos, estaciones, alertas y predicciones son sintéticos y simulados. No es un sistema de alerta real: ante una emergencia real, seguí a las autoridades locales."
+}
