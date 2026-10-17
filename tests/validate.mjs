@@ -56,7 +56,7 @@ for (const id of ids) for (let t = 1; t <= 360; t++) {
   if (b.severity < a.severity) { monotone = false; flaps += ` ${id}@${t}`; }
 }
 check('la severidad por estación nunca retrocede (sin parpadeos)', monotone, flaps);
-check('niveles del río monótonos crecientes (ignorando ruido ≤1 cm)', ids.every((id) => snaps.every((s, t) => t === 0 || s.stations.find((x) => x.id === id).stale || s.stations.find((x) => x.id === id).level >= snaps[t - 1].stations.find((x) => x.id === id).level - 0.01)));
+check('niveles del río crecientes salvo el paso de cresta aguas arriba (caída ≤2 cm por minuto, sin parpadeos)', ids.every((id) => snaps.every((s, t) => t === 0 || s.stations.find((x) => x.id === id).stale || s.stations.find((x) => x.id === id).level >= snaps[t - 1].stations.find((x) => x.id === id).level - 0.02)));
 
 const redT = firstAt(3);
 const preCrit = snaps.findIndex((s) => s.system.outlook.preAlert && s.system.outlook.key === 'critical');
@@ -79,6 +79,23 @@ check('alertas activas coherentes con el sistema', snaps[360].alerts[0].severity
 check('sin NaN/undefined en snapshots', !snaps.some((s) => /NaN|undefined/.test(JSON.stringify(s))));
 check('marcadores de línea temporal presentes', model.markers.length >= 5 && model.markers.some((m) => m.kind === 'forecast'));
 
+
+
+/* ---------------------------------------------------------------- coherencia espacial / propagación */
+section('Coherencia geográfica y propagación (conceptual)');
+{
+  const R = 6371, rad = Math.PI / 180;
+  const dist = (a, b) => Math.hypot((b[1] - a[1]) * rad * Math.cos((a[0] + b[0]) / 2 * rad), (b[0] - a[0]) * rad) * R;
+  const path = data.map.river.path, cum = [0];
+  for (let i = 1; i < path.length; i++) cum.push(cum[i - 1] + dist(path[i - 1], path[i]));
+  const sts = data.stations.stations;
+  const kmOf = (s) => cum[data.map.river.stationPathIndex[s.id]] - cum[data.map.river.stationPathIndex[sts[0].id]];
+  check('riverKm coincide con la distancia acumulada de la geometría (±0,2 km)', sts.every((s) => Math.abs(s.riverKm - kmOf(s)) <= 0.2), JSON.stringify(sts.map((s) => [s.riverKm, +kmOf(s).toFixed(1)])));
+  check('lagMin crece aguas abajo (la onda llega antes a las estaciones de arriba)', sts.every((s, i) => i === 0 || s.lagMin > sts[i - 1].lagMin));
+  const speeds = sts.slice(1).map((s, i) => ((s.riverKm - sts[i].riverKm) * 1000) / ((s.lagMin - sts[i].lagMin) * 60));
+  check('celeridad conceptual implícita uniforme entre estaciones (3,5–4,7 m/s)', speeds.every((v) => v >= 3.5 && v <= 4.7), JSON.stringify(speeds.map((v) => +v.toFixed(2))));
+  check('estado base estable: todas las tendencias en "steady" y sistema normal', (() => { const b = snapshotAt(model, data.scenario.baselineT); return b.stations.every((x) => x.trend === 'steady') && b.system.status === 'normal'; })());
+}
 
 /* ---------------------------------------------------------------- derivados: LoRa, sirenas, telemetría del nodo */
 section('Derivados (LoRa, sirenas) y telemetría del Modo Nodo');

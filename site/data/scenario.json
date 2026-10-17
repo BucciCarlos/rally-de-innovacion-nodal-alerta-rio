@@ -8,7 +8,7 @@
   "durationMin": 360,
   "prerollMin": 180,
   "postrollMin": 180,
-  "baselineT": -60,
+  "baselineT": -120,
   "stepMin": 10,
   "defaultSpeed": 2,
   "speeds": [1, 2, 4, 8],

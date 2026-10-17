@@ -1,33 +1,33 @@
 {
-  "_comment": "Estaciones SINTÉTICAS (celulares reutilizados, conceptuales). Niveles en metros sobre cero de escala ficticio.",
+  "_comment": "Estaciones SINTÉTICAS (celulares reutilizados, conceptuales). Niveles en metros sobre cero de escala ficticio. riverKm = distancia acumulada sobre la geometría del río desde E1 (km, según las coordenadas ficticias). lagMin = retardo CONCEPTUAL de la onda respecto de E4 (≈4 m/s entre estaciones, ver docs/PROPAGACION.md); NO es una calibración hidrológica. Los umbrales son sintéticos y por estación (vulnerabilidad local).",
   "unit": "m",
   "stations": [
     {
       "id": "E1", "order": 1, "name": "Paso Alto", "short": "Paso Alto", "role": "Cabecera de cuenca", "riverKm": 0.0,
-      "base": 0.9, "amp": 2.1, "lagMin": -60, "rainFactor": 1.3,
-      "thresholds": { "vigilancia": 1.6, "naranja": 2.2, "roja": 3.2 },
+      "base": 0.9, "amp": 2.1, "lagMin": -100, "rainFactor": 1.3,
+      "thresholds": { "vigilancia": 1.93, "naranja": 2.46, "roja": 3.2 },
       "device": { "model": "Smartphone reutilizado (conceptual)", "batteryStart": 94, "drainPerHour": 4.0, "signalBaseDbm": -86, "quirks": [] }
     },
     {
-      "id": "E2", "order": 2, "name": "Estancia Los Ceibos", "short": "Los Ceibos", "role": "Curso medio-alto", "riverKm": 6.5,
-      "base": 1.0, "amp": 2.3, "lagMin": -40, "rainFactor": 1.15,
-      "thresholds": { "vigilancia": 1.7, "naranja": 2.4, "roja": 3.5 },
+      "id": "E2", "order": 2, "name": "Estancia Los Ceibos", "short": "Los Ceibos", "role": "Curso medio-alto", "riverKm": 8.0,
+      "base": 1.0, "amp": 2.3, "lagMin": -70, "rainFactor": 1.15,
+      "thresholds": { "vigilancia": 1.98, "naranja": 2.63, "roja": 3.5 },
       "device": { "model": "Smartphone reutilizado (conceptual)", "batteryStart": 44, "drainPerHour": 5.6, "signalBaseDbm": -97, "quirks": [] }
     },
     {
-      "id": "E3", "order": 3, "name": "Puente Viejo", "short": "Puente Viejo", "role": "Curso medio", "riverKm": 12.0,
-      "base": 1.1, "amp": 2.6, "lagMin": -20, "rainFactor": 1.0,
-      "thresholds": { "vigilancia": 1.9, "naranja": 2.7, "roja": 4.0 },
+      "id": "E3", "order": 3, "name": "Puente Viejo", "short": "Puente Viejo", "role": "Curso medio", "riverKm": 16.4,
+      "base": 1.1, "amp": 2.6, "lagMin": -35, "rainFactor": 1.0,
+      "thresholds": { "vigilancia": 2.06, "naranja": 2.82, "roja": 4.0 },
       "device": { "model": "Smartphone reutilizado (conceptual)", "batteryStart": 81, "drainPerHour": 4.5, "signalBaseDbm": -90, "quirks": [] }
     },
     {
-      "id": "E4", "order": 4, "name": "Costanera Villa Serena", "short": "Costanera", "role": "Zona urbana crítica", "riverKm": 18.0,
+      "id": "E4", "order": 4, "name": "Costanera Villa Serena", "short": "Costanera", "role": "Zona urbana crítica", "riverKm": 24.9,
       "base": 1.3, "amp": 3.4, "lagMin": 0, "rainFactor": 0.9,
       "thresholds": { "vigilancia": 2.05, "naranja": 3.05, "roja": 3.9 },
       "device": { "model": "Smartphone reutilizado (conceptual)", "batteryStart": 88, "drainPerHour": 3.8, "signalBaseDbm": -78, "quirks": [] }
     },
     {
-      "id": "E5", "order": 5, "name": "Barrio Molino", "short": "Molino", "role": "Meandro bajo", "riverKm": 24.0,
+      "id": "E5", "order": 5, "name": "Barrio Molino", "short": "Molino", "role": "Meandro bajo", "riverKm": 32.7,
       "base": 1.2, "amp": 3.0, "lagMin": 30, "rainFactor": 0.85,
       "thresholds": { "vigilancia": 1.9, "naranja": 2.7, "roja": 3.9 },
       "device": {
@@ -36,7 +36,7 @@
       }
     },
     {
-      "id": "E6", "order": 6, "name": "Puerto Nuevo", "short": "Puerto", "role": "Desembocadura", "riverKm": 30.0,
+      "id": "E6", "order": 6, "name": "Puerto Nuevo", "short": "Puerto", "role": "Desembocadura", "riverKm": 39.6,
       "base": 1.0, "amp": 2.5, "lagMin": 60, "rainFactor": 0.8,
       "thresholds": { "vigilancia": 1.6, "naranja": 3.1, "roja": 3.6 },
       "device": { "model": "Smartphone reutilizado (conceptual)", "batteryStart": 67, "drainPerHour": 4.2, "signalBaseDbm": -84, "quirks": [ { "type": "sensor-degraded", "sensor": "pressure", "fromMin": 90, "toMin": 400 } ] }

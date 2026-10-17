@@ -21,7 +21,7 @@ Requiere `<link rel="stylesheet" href=".../assets/css/base.css">` y `.../sim-con
 
 | `snap.mode` | Cuándo | `snap.t` |
 |---|---|---|
-| `baseline` | Simulación apagada (estado inicial presentable: río normal, previo a la lluvia) | `timeline.baselineT` (−60) |
+| `baseline` | Simulación apagada (estado inicial presentable: río normal, previo a la lluvia) | `timeline.baselineT` (−120) |
 | `simulation` | Simulación activada | 0 … 360 (minutos del escenario) |
 
 La simulación **siempre arranca apagada**. Al activarla se coloca en t=0 y en pausa. Al llegar a 360 se detiene (`sim.ended`);
