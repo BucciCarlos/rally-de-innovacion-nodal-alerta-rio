@@ -81,7 +81,7 @@
             </p>
         </section>
 
-        <section class="advice" id="advice" data-status="normal" aria-labelledby="advice-title">
+        <section class="advice" id="advice" data-status="normal" aria-labelledby="advice-title" tabindex="-1">
           <h2 class="advice__title" id="advice-title">Qué hacer ahora</h2>
           <ol class="advice__list"></ol>
         </section>
@@ -98,6 +98,12 @@
       <div class="hero__sim" id="sim-slot"></div>
 
       <div class="legend" id="legend"></div>
+
+      <!-- Indicador de contenido desplazable: sólo en escritorio, cuando el panel lateral (que tiene su propio scroll) no muestra todas las recomendaciones -->
+      <button type="button" class="scroll-hint" id="scroll-hint" data-visible="false" aria-controls="advice">
+        <span>Ver más recomendaciones</span>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
     </section>
 
     <section class="zl" id="tu-zona" aria-labelledby="zl-title">

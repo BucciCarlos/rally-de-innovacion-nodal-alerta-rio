@@ -6,6 +6,7 @@ import { icon } from './icons.js';
 import { createRiverMap } from './map/index.js';
 import { createBanner } from './banner.js';
 import { createAdvice } from './advice.js';
+import { createScrollHint } from './scrollhint.js';
 import { createFacts } from './facts.js';
 import { createZoneList } from './zonelist.js';
 import { buildLegend } from './legend.js';
@@ -34,6 +35,7 @@ async function start() {
   });
   const banner = createBanner($('#status'), { onStart: () => sim.enable() });
   const advice = createAdvice($('#advice'));
+  createScrollHint($('.hero__panel'), $('#advice'), $('#scroll-hint'));
   const facts = createFacts($('#facts'));
   const zonelist = createZoneList($('#tu-zona'), sim, {
     onSelect: (id) => select(id),

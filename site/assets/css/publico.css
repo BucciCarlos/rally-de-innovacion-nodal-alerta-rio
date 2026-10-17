@@ -400,7 +400,7 @@ h2 { font-size: clamp(1.7rem, 4.2vw, 2.5rem); font-weight: 800; letter-spacing: 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .chip--trend .ic, .outlook[data-pre="true"], .stn__pulse, .m-flow, .m-route, .art-dash, .map__rain, .hero[data-status="roja"] .status,
-  .hero[data-status="roja"] .map__vignette, .lm.is-pulse .lm__badge { animation: none !important; }
+  .hero[data-status="roja"] .map__vignette, .lm.is-pulse .lm__badge, .scroll-hint svg { animation: none !important; }
   .map__rain { display: none; }
   .stn[data-status="naranja"] .stn__pulse, .stn[data-status="roja"] .stn__pulse { opacity: .3; transform: scale(1.5); }
 }
@@ -503,6 +503,24 @@ h2 { font-weight: 750; letter-spacing: -.02em; }
 /* Con el riesgo en curso el recuadro adopta el borde del nivel (misma presencia que la pre-alerta, sin halo) */
 .outlook[data-pre="false"][data-status="naranja"], .outlook[data-pre="false"][data-status="roja"] { background: #fff; border-color: var(--st); outline: none; }
 @media (min-width: 1024px) { .chips { flex-direction: column; align-items: flex-start; } }
+
+
+/* ---------- Indicador de contenido desplazable (panel lateral de escritorio) ---------- */
+.scroll-hint { display: none; }
+@media (min-width: 1024px) {
+  .scroll-hint {
+    position: absolute; z-index: 11; left: calc(var(--panel-w) - 8px); bottom: 12px; transform: translateX(-100%);   /* a la derecha: no tapa el título de la tarjeta */
+    display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 12px 0 14px; cursor: pointer;
+    border: 1px solid var(--line-soft); border-radius: var(--r-ctl); background: var(--glass); color: var(--ar-ink-2);
+    font: 700 .78rem/1 var(--font-body); box-shadow: 0 4px 14px rgba(10, 27, 46, .18);
+    opacity: 0; visibility: hidden; transition: opacity .25s var(--ease), visibility 0s linear .25s, background .2s;
+  }
+  .scroll-hint[data-visible="true"] { opacity: 1; visibility: visible; transition-delay: 0s; }
+  .scroll-hint:hover { background: #fff; }
+  .scroll-hint:active { transform: translateX(-100%) scale(.97); }
+  .scroll-hint svg { flex: none; color: var(--ar-water-deep); animation: hintBob 2s ease-in-out infinite; }
+}
+@keyframes hintBob { 0%, 100% { transform: translateY(-1px); } 50% { transform: translateY(2px); } }
 
 /* ---- Escenografía territorial ficticia (core/scenery.js): clara y de bajo contraste, bajo zonas, río y estaciones ---- */
 .sc-farm { stroke: none; fill-opacity: .9; } .sc-farm--a { fill: #e8e5c4; } .sc-farm--b { fill: #dde7c6; }

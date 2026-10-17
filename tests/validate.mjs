@@ -151,6 +151,18 @@ section('Tarjeta de estado: geometría estable entre estados');
   check('la entrada del mensaje de previsión no desplaza el recuadro', /\.outlook\.swap\[data-pre="false"\] \{ animation: fadeIn/.test(css));
 }
 
+
+/* ---------------------------------------------------------------- indicador de contenido desplazable */
+section('Indicador «Ver más recomendaciones» (panel lateral de escritorio)');
+{
+  const html = rd('site/index.html'), css = rd('site/assets/css/publico.css'), js = rd('site/assets/js/publico/scrollhint.js');
+  check('botón accesible con texto visible y aria-controls hacia las recomendaciones (que pueden recibir foco)', /<button type="button" class="scroll-hint" id="scroll-hint"[^>]*aria-controls="advice"[\s\S]*?Ver más recomendaciones/.test(html) && /id="advice"[^>]*tabindex="-1"/.test(html));
+  check('sólo en escritorio y sin tocar la geometría (flotante, sin altura fija en las tarjetas)', /\.scroll-hint \{ display: none; \}/.test(css) && /@media \(min-width: 1024px\) \{\s*\.scroll-hint \{\s*position: absolute/.test(css));
+  check('oculto = invisible y fuera del orden de tabulación (visibility), con fundido', /opacity: 0; visibility: hidden; transition: opacity/.test(css) && /\[data-visible="true"\] \{ opacity: 1; visibility: visible/.test(css));
+  check('respeta prefers-reduced-motion (sin animación y desplazamiento inmediato)', /\.scroll-hint svg \{ animation: none !important; \}/.test(css) && /prefersReducedMotion\(\) \? 'auto' : 'smooth'/.test(js));
+  check('observa scroll y cambios de tamaño del panel (ResizeObserver) y mueve el foco al contenido', /ResizeObserver/.test(js) && /addEventListener\('scroll'/.test(js) && /target\.focus\(\{ preventScroll: true \}\)/.test(js) && /createScrollHint\(/.test(rd('site/assets/js/publico/main.js')));
+}
+
 /* ---------------------------------------------------------------- derivados: LoRa, sirenas, telemetría del nodo */
 section('Derivados (LoRa, sirenas) y telemetría del Modo Nodo');
 const sirenAt = (t, zone) => sirens(snaps[t], data.map).find((x) => x.zoneId === zone).state;
