@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Alerta Río — Estado del río</title>
-  <meta name="description" content="Demostración conceptual: estado del río con datos simulados.">
+  <meta name="description" content="Demostración conceptual: estado del río, alertas y recomendaciones con datos simulados.">
+  <meta name="theme-color" content="#0a1b2e">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/sim-controls.css">
@@ -12,15 +13,181 @@
   <link rel="stylesheet" href="assets/css/publico.css">
 </head>
 <body>
-  <!-- PLACEHOLDER del núcleo: feat/publico reemplaza todo este archivo. -->
+  <a class="skip-link" href="#estado">Ir al estado del río</a>
+
   <header class="pub-header">
-    <strong>Alerta Río</strong>
-    <span class="sim-badge">Datos simulados</span>
-    <a class="pub-ops" href="operadores/" target="_blank" rel="noopener" aria-label="Acceso para operadores (se abre en otra pestaña)">Operadores ↗</a>
+    <a class="pub-brand" href="./" aria-label="Alerta Río — inicio">
+      <svg class="pub-logo" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false">
+        <rect x="9" y="2.5" width="14" height="27" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 19c2-2 3.500-2 5 0s3 2 4 0M12 23.500c2-2 3.500-2 5 0s3 2 4 0" fill="none" stroke="var(--ar-water-hi)" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="16" cy="9" r="1.800" fill="currentColor"/>
+      </svg>
+      <span class="pub-brand__name">Alerta Río</span>
+    </a>
+    <span class="sim-badge pub-badge">Datos simulados</span>
+    <a class="pub-ops" href="operadores/" target="_blank" rel="noopener" aria-label="Acceso para operadores (se abre en otra pestaña)">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      <span>Operadores</span>
+    </a>
   </header>
-  <main id="app" class="pub-main" aria-live="polite">Cargando…</main>
-  <div id="sim-slot"></div>
+
+  <main id="main">
+    <p id="load-error" class="load-error" role="alert" hidden>No se pudo cargar la simulación. Abrí la página desde un servidor local (ver README) y recargá.</p>
+
+    <!-- HÉROE: estado + mapa + qué hacer. data-status/mode/pre los actualiza main.js -->
+    <section class="hero" id="estado" data-status="normal" data-mode="baseline" data-pre="false" aria-label="Estado del río y mapa">
+      <div class="hero__panel">
+        <section class="status" id="status" data-status="normal" aria-labelledby="status-title">
+          <div class="status__head">
+            <div class="status__badge" id="status-badge" aria-hidden="true"></div>
+            <div class="status__titles">
+              <p class="status__label"><span class="status__dot" aria-hidden="true"></span><span id="status-label">Normal</span><span class="status__clock" id="status-clock"></span></p>
+              <h1 class="status__headline" id="status-title">Consultando el estado del río…</h1>
+            </div>
+          </div>
+          <div class="status__body">
+            <p class="status__citizen" id="status-citizen"></p>
+            <ul class="chips" aria-label="Situación actual">
+              <li class="chip chip--trend" id="chip-trend"></li>
+              <li class="chip" id="chip-rain"></li>
+            </ul>
+          </div>
+          <div class="outlook" id="outlook" data-pre="false" data-status="normal">
+              <p class="outlook__top">
+                <span class="outlook__tag"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7.5A4.500 4.500 0 1 0 16.500 12"/><path d="M12 12l6.500-6.500"/></svg>Previsión · estimación simulada</span>
+                <span class="outlook__conf" id="outlook-conf" hidden></span>
+              </p>
+              <p class="outlook__msg" id="outlook-msg"></p>
+              <div class="outlook__eta" id="outlook-eta" hidden>
+                <p class="outlook__eta-line">Podría llegar <strong id="eta-val"></strong></p>
+                <div class="outlook__bar" aria-hidden="true">
+                  <i class="outlook__fill" id="eta-fill"></i><i class="outlook__mark" id="eta-mark"></i>
+                  <span class="outlook__now">Ahora</span><span class="outlook__end">+2 h</span>
+                </div>
+              </div>
+            </div>
+
+            <p class="status__hint" id="status-hint" hidden>
+              <span>Estás viendo un día tranquilo.</span>
+              <button type="button" id="hint-start" class="hint-btn">Ver un escenario de crecida</button>
+            </p>
+        </section>
+
+        <section class="advice" id="advice" data-status="normal" aria-labelledby="advice-title">
+          <h2 class="advice__title" id="advice-title">Qué hacer ahora</h2>
+          <ol class="advice__list"></ol>
+        </section>
+      </div>
+
+      <div class="hero__map">
+        <div id="map" class="map" role="region" aria-label="Mapa esquemático del río Serena con estaciones, barrios y puntos seguros. Los mismos datos están en la sección Tu zona."></div>
+        <div class="map__rain" aria-hidden="true"></div>
+        <div class="map__vignette" aria-hidden="true"></div>
+        <div class="map__tools" id="map-tools"></div>
+        <p class="map__note">Mapa esquemático · geografía ficticia</p>
+      </div>
+
+      <div class="hero__sim" id="sim-slot"></div>
+
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <section class="zl" id="tu-zona" aria-labelledby="zl-title">
+      <div class="wrap zl__grid">
+        <div class="zl__intro">
+          <p class="eyebrow">Tu zona</p>
+          <h2 id="zl-title">¿Cómo está tu barrio?</h2>
+          <p class="lede">Elegí tu zona para ver qué significa la situación del río para vos y cuál es el punto seguro más cercano.</p>
+          <ul class="zl__list"></ul>
+        </div>
+        <div class="zd" aria-live="off"></div>
+      </div>
+    </section>
+
+    <section class="facts" id="facts" aria-labelledby="facts-title">
+      <div class="wrap">
+        <p class="eyebrow">Ahora mismo</p>
+        <h2 id="facts-title" class="sr-only">Estado actual en pocas cifras</h2>
+        <dl class="facts__row">
+          <div class="fact"><dt id="fact-level-l">Río</dt><dd id="fact-level-v">—</dd><dd class="fact__sub" id="fact-level-s"></dd></div>
+          <div class="fact"><dt>Lluvia</dt><dd id="fact-rain-v">—</dd><dd class="fact__sub" id="fact-rain-s"></dd></div>
+          <div class="fact"><dt>Estaciones en línea</dt><dd id="fact-net-v">—</dd><dd class="fact__sub" id="fact-net-s"></dd></div>
+          <div class="fact"><dt>Última actualización</dt><dd id="fact-time-v">—</dd><dd class="fact__sub" id="fact-time-s"></dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="how" id="como-funciona" aria-labelledby="how-title">
+      <div class="wrap">
+        <p class="eyebrow">Cómo funciona</p>
+        <h2 id="how-title">De un celular viejo a un aviso claro</h2>
+        <ol class="how__steps">
+          <li class="step">
+            <svg class="step__art" viewBox="0 0 160 120" aria-hidden="true" focusable="false">
+              <circle cx="80" cy="60" r="52" class="art-soft"/>
+              <rect x="58" y="22" width="44" height="78" rx="9" class="art-line art-fill"/>
+              <rect x="64" y="32" width="32" height="50" rx="3" class="art-screen"/>
+              <circle cx="80" cy="91" r="3" class="art-dot"/>
+              <path d="M112 38a24 24 0 0 1 8 22m0 0l-8 1m8-1l2-8" class="art-line art-accent"/>
+              <path d="M48 82a24 24 0 0 1-8-22m0 0l8-1m-8 1l-2 8" class="art-line art-accent"/>
+            </svg>
+            <h3>1. Un celular en desuso</h3>
+            <p>En lugar de tirarlo, se instala junto al río y se convierte en una estación de monitoreo de bajo costo.</p>
+          </li>
+          <li class="step">
+            <svg class="step__art" viewBox="0 0 160 120" aria-hidden="true" focusable="false">
+              <circle cx="80" cy="60" r="52" class="art-soft"/>
+              <path d="M18 92c14-8 26 8 40 0s26 8 40 0 26 8 44 0" class="art-line art-water"/>
+              <path d="M18 104c14-8 26 8 40 0s26 8 40 0 26 8 44 0" class="art-line art-water art-water--2"/>
+              <path d="M56 100V30" class="art-line"/>
+              <rect x="46" y="14" width="22" height="34" rx="5" class="art-line art-fill"/>
+              <path d="M70 26l32 36M70 32l44 28M70 38l36 18" class="art-dash"/>
+              <path d="M112 12l-3 9M124 12l-3 9M136 12l-3 9" class="art-line art-water"/>
+            </svg>
+            <h3>2. Mira el río y la lluvia</h3>
+            <p>Con su cámara, micrófono y sensores mide cuánta agua hay, cuánto llueve y si el tiempo está cambiando.</p>
+          </li>
+          <li class="step">
+            <svg class="step__art" viewBox="0 0 160 120" aria-hidden="true" focusable="false">
+              <circle cx="80" cy="60" r="52" class="art-soft"/>
+              <path d="M24 86l22-10 18 6 20-20 18-6" class="art-line art-accent"/>
+              <path d="M102 56l16-14 18-10" class="art-dash art-dash--warn"/>
+              <path d="M102 56l16-14 18-10v22l-18 10-16 4z" class="art-band"/>
+              <circle cx="102" cy="56" r="4.500" class="art-dot"/>
+              <path d="M24 98h112M24 30v68" class="art-axis"/>
+            </svg>
+            <h3>3. Estima lo que viene</h3>
+            <p>Un centro de análisis junta las lecturas y calcula una estimación simulada de cómo seguirá el río en las próximas horas.</p>
+          </li>
+          <li class="step">
+            <svg class="step__art" viewBox="0 0 160 120" aria-hidden="true" focusable="false">
+              <circle cx="80" cy="60" r="52" class="art-soft"/>
+              <rect x="56" y="14" width="48" height="92" rx="10" class="art-line art-fill"/>
+              <rect x="62" y="30" width="36" height="22" rx="4" class="art-alert"/>
+              <path d="M70 62h20M70 70h14M70 80h20M70 88h10" class="art-line art-thin"/>
+              <path d="M118 36c6 6 6 18 0 24M126 28c10 10 10 30 0 40M42 36c-6 6-6 18 0 24M34 28c-10 10-10 30 0 40" class="art-line art-accent"/>
+            </svg>
+            <h3>4. Te avisa con claridad</h3>
+            <p>Si hace falta, ves un mensaje simple: qué pasa, qué tan grave es y a dónde ir. Sin tecnicismos.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot__grid">
+      <div>
+        <p class="foot__brand">Alerta Río</p>
+        <p class="foot__small">Rally Latinoamericano de Innovación 2026 · Mockup conceptual</p>
+      </div>
+      <p class="foot__disclaimer"><span class="sim-badge">Datos simulados</span> <span id="disclaimer">DEMOSTRACIÓN CONCEPTUAL. Todos los datos, estaciones, alertas y predicciones son sintéticos y simulados. No es un sistema de alerta real: ante una emergencia real, seguí a las autoridades locales.</span></p>
+    </div>
+  </footer>
+
+  <div id="live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  <script src="assets/vendor/leaflet/leaflet.js"></script>
   <script type="module" src="assets/js/publico/main.js"></script>
-  <noscript>Esta demostración requiere JavaScript.</noscript>
+  <noscript><p class="load-error">Esta demostración requiere JavaScript para mostrar el mapa y el estado del río.</p></noscript>
 </body>
 </html>
