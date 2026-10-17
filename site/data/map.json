@@ -384,7 +384,7 @@
   {
    "id": "L5",
    "kind": "shelter",
-   "name": "Polideportivo — punto seguro",
+   "name": "Polideportivo (ficticio) — punto seguro",
    "latlng": [-32.01369, -60.00606]
   },
   {
@@ -396,7 +396,7 @@
   {
    "id": "L7",
    "kind": "shelter",
-   "name": "Club Molino — punto seguro",
+   "name": "Club Molino (ficticio) — punto seguro",
    "latlng": [-32.08538, -59.95576]
   }
  ]

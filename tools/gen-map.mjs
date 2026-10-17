@@ -61,9 +61,9 @@ const landmarks = [
   { id: 'L2', kind: 'bridge',  name: 'Puente de la Costanera',        latlng: path[43] },
   { id: 'L3', kind: 'school',  name: 'Escuela N.º 12 (ficticia)',     latlng: pointNear(44, 0.008) },
   { id: 'L4', kind: 'hospital',name: 'Hospital Regional (ficticio)',  latlng: pointNear(43, 0.019) },
-  { id: 'L5', kind: 'shelter', name: 'Polideportivo — punto seguro',  latlng: pointNear(41, 0.022) },
+  { id: 'L5', kind: 'shelter', name: 'Polideportivo (ficticio) — punto seguro',  latlng: pointNear(41, 0.022) },
   { id: 'L6', kind: 'fire',    name: 'Cuartel de Bomberos (ficticio)',latlng: pointNear(47, 0.021) },
-  { id: 'L7', kind: 'shelter', name: 'Club Molino — punto seguro',    latlng: pointNear(57, -0.02) }
+  { id: 'L7', kind: 'shelter', name: 'Club Molino (ficticio) — punto seguro',    latlng: pointNear(57, -0.02) }
 ];
 
 const lats = path.map((p) => p[0]), lngs = path.map((p) => p[1]);

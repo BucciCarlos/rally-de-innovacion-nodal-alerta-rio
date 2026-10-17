@@ -32,3 +32,11 @@
 ## Pendiente
 
 No quedan componentes prioritarios pendientes de la interfaz. Los pedidos anteriores son mejoras de datos/recursos compartidos; la vista incluye los workarounds indicados. Integración y publicación quedan a cargo del coordinador; no se hizo merge ni push.
+
+## Resolución (integración en main)
+1. `sinceT` ahora lo informan también las alertas de dispositivo y de predicción (nunca `null`).
+2. `confidenceLabel` puede ser `null` sin estación de anticipación (documentado en el contrato).
+3. Texto tras el cruce crítico: resuelto con `system.outlook.ongoing` (mensaje no prospectivo).
+4. `site/favicon.ico` agregado en la raíz.
+5. Contraste: `--lvl-normal` pasó a `#16845a` (4,69:1 con texto blanco) en `base.css` y `levels.json`.
+- Eje X del gráfico histórico: sin ticks de borde (se solapaban a la derecha).

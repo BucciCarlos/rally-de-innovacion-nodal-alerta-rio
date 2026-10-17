@@ -13,3 +13,7 @@
 
 ## Pedidos al núcleo
 1. `outlook.message` cuando el riesgo ya ocurrió (`preAlert=false`, `system.severity >= outlook.severity`) sigue diciendo "Se prevé que el río podría llegar al nivel crítico…". Workaround local: la vista muestra "La situación ya está en curso…". Sugerencia: otro texto en `levels.json → outlook` para ese caso.
+
+## Resolución (integración en main)
+- Pedido 1 (texto tras el cruce crítico): resuelto en el núcleo — `system.outlook.ongoing` y `levels.json → ongoing`; el mensaje del motor ya no es prospectivo.
+- Se rotularon como ficticios los puntos seguros (`data/map.json`) y se añadió la nota "no es una indicación real de evacuación" en el detalle de "Tu zona".

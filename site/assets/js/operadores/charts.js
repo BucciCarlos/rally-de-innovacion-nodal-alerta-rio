@@ -20,7 +20,7 @@ export function createCharts(sim) {
     type: 'line', plugins: [nowPlugin], data: { datasets: [] }, options: {
       ...common, parsing: false, normalized: false, spanGaps: false,
       elements: { point: { radius: 0, hitRadius: 8 }, line: { borderWidth: 2, tension: .18 } },
-      scales: { x: { type: 'linear', grid: { color: '#1e3545' }, ticks: { color: '#a9bdcc', maxTicksLimit: 7, callback: (v) => clockAt(v, sim.timeline) } }, y: { grid: { color: '#1e3545' }, ticks: { color: '#a9bdcc', callback: (v) => `${v.toLocaleString('es-AR')} m` } } },
+      scales: { x: { type: 'linear', grid: { color: '#1e3545' }, ticks: { color: '#a9bdcc', maxTicksLimit: 6, includeBounds: false, callback: (v) => clockAt(v, sim.timeline) } }, y: { grid: { color: '#1e3545' }, ticks: { color: '#a9bdcc', callback: (v) => `${v.toLocaleString('es-AR')} m` } } },
       plugins: { ...common.plugins, tooltip: { ...common.plugins.tooltip, filter: (item) => item.datasetIndex < 2, callbacks: { title: (items) => clockAt(items[0].parsed.x, sim.timeline), label: (item) => `${item.dataset.label}: ${fmtLevel(item.parsed.y)}` } } }
     }
   });

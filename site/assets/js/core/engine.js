@@ -78,7 +78,7 @@ export function buildModel(data) {
     duration: scenario.durationMin,
     preroll: scenario.prerollMin,
     H, rainFn, pressureFn, windFn, tempFn,
-    events: [], markers: [], transitions: {}
+    events: [], markers: [], transitions: {}, deviceSince: {}, forecastSince: {}
   };
   model.events = [];
   scanTimeline(model);
@@ -190,12 +190,14 @@ function outlookFor(model, stationStates) {
   const preAlert = pw >= 2 && pw > cw;       // el peligro se anticipa ANTES de que ocurra
   const station = focus ? model.stationsById[focus.stationId] : null;
   let message = text.citizen;
+  const ongoing = !preAlert && pw >= 2 && cw >= pw;     // el umbral ya se alcanzó: el texto no debe ser prospectivo
+  if (ongoing) message = model.levels.ongoing[key];
   if (preAlert && focus && station) {
     const target = pw === 3 ? 'nivel crítico (alerta roja)' : 'alerta naranja';
     message = `Predicción simulada: posible ${target} en ${station.name} en aprox. ${fmtMinutes(focus.etaMin)} (confianza ${focus.confidenceLabel}).`;
   }
   return {
-    simulated: true, key, label: text.label, message, preAlert,
+    simulated: true, key, label: text.label, message, preAlert, ongoing,
     severity: pw, status: STATUS_ORDER[pw],
     stationId: focus ? focus.stationId : null,
     etaMin: focus ? focus.etaMin : null,
@@ -293,6 +295,7 @@ function scanTimeline(model) {
   const add = (e) => events.push({ simulated: true, severity: 0, ...e });
   const prev = Object.fromEntries(stations.map((s) => [s.id, { sev: 0, batt: 'ok', conn: 'online', sensors: {} }]));
   const sinceByStation = Object.fromEntries(stations.map((s) => [s.id, {}]));
+  const deviceSince = {};   // `${id}:offline` | `${id}:battery:${estado}` → minuto en que empezó la condición vigente
   let prevSys = 0, prevOutlook = 'calm';
   const seenOutlook = new Set();
   const markers = [];
@@ -322,9 +325,11 @@ function scanTimeline(model) {
         if (t >= 0 && worse && (dev.batteryState === 'baja' || dev.batteryState === 'critica')) {
           add({ t, type: 'device', stationId: s.id, severity: dev.batteryState === 'critica' ? 2 : 1, title: `${s.short}: batería ${dev.batteryState === 'critica' ? 'crítica' : 'baja'}`, detail: `La batería del dispositivo cayó a ${dev.battery} % (simulado).` });
         }
+        if (dev.batteryState === 'baja' || dev.batteryState === 'critica') deviceSince[`${s.id}:battery:${dev.batteryState}`] = t;
         p.batt = dev.batteryState;
       }
       if (dev.connectivity !== p.conn) {
+        if (dev.connectivity === 'offline') deviceSince[`${s.id}:offline`] = t;
         if (t >= 0) {
           if (dev.connectivity === 'offline') add({ t, type: 'device', stationId: s.id, severity: 2, title: `${s.short}: pérdida de conectividad`, detail: 'Sin enlace de datos; se muestra la última lectura recibida (simulado).' });
           else if (dev.connectivity === 'degraded') add({ t, type: 'device', stationId: s.id, severity: 1, title: `${s.short}: señal débil`, detail: 'Enlace inestable; posibles retrasos en las lecturas (simulado).' });
@@ -360,6 +365,8 @@ function scanTimeline(model) {
   model.events = events;
   model.markers = markers;
   model.transitions = sinceByStation;
+  model.deviceSince = deviceSince;
+  model.forecastSince = Object.fromEntries(markers.filter((m) => m.kind === 'forecast').map((m) => [m.severity, m.t]));
 }
 
 /* ------------------------------------------------------------------ snapshot */
@@ -417,11 +424,11 @@ export function snapshotAt(model, t, opts = {}) {
         detail: `Nivel ${s.level.toFixed(2)} ${model.unit}. ${s.trend === 'rising' ? `Subiendo ${s.rateCmH} cm/h.` : s.trend === 'falling' ? 'Bajando.' : 'Estable.'}`
       });
     }
-    if (s.device.connectivity === 'offline') alerts.push({ id: `dev-off-${s.id}`, kind: 'device', stationId: s.id, severity: 1, status: null, title: `${s.short}: sin conexión`, detail: `Última lectura hace ${s.device.lastSeenMin} min.` });
-    if (s.device.batteryState === 'baja' || s.device.batteryState === 'critica') alerts.push({ id: `dev-bat-${s.id}`, kind: 'device', stationId: s.id, severity: s.device.batteryState === 'critica' ? 2 : 1, status: null, title: `${s.short}: batería ${s.device.batteryState === 'critica' ? 'crítica' : 'baja'}`, detail: `${s.device.battery} % restante.` });
+    if (s.device.connectivity === 'offline') alerts.push({ id: `dev-off-${s.id}`, kind: 'device', stationId: s.id, severity: 1, status: null, sinceT: model.deviceSince[`${s.id}:offline`] ?? null, title: `${s.short}: sin conexión`, detail: `Última lectura hace ${s.device.lastSeenMin} min.` });
+    if (s.device.batteryState === 'baja' || s.device.batteryState === 'critica') alerts.push({ id: `dev-bat-${s.id}`, kind: 'device', stationId: s.id, severity: s.device.batteryState === 'critica' ? 2 : 1, status: null, sinceT: model.deviceSince[`${s.id}:battery:${s.device.batteryState}`] ?? null, title: `${s.short}: batería ${s.device.batteryState === 'critica' ? 'crítica' : 'baja'}`, detail: `${s.device.battery} % restante.` });
   }
   if (outlook.preAlert) {
-    alerts.push({ id: 'forecast', kind: 'forecast', stationId: outlook.stationId, severity: outlook.severity, status: outlook.status, sinceT: null, title: `Predicción simulada: ${outlook.label.toLowerCase()}`, detail: outlook.message });
+    alerts.push({ id: 'forecast', kind: 'forecast', stationId: outlook.stationId, severity: outlook.severity, status: outlook.status, sinceT: model.forecastSince[outlook.severity] ?? null, title: `Predicción simulada: ${outlook.label.toLowerCase()}`, detail: outlook.message });
   }
   const kindOrder = { forecast: 0, level: 1, device: 2 };
   alerts.sort((a, b) => b.severity - a.severity || kindOrder[a.kind] - kindOrder[b.kind] || a.id.localeCompare(b.id));

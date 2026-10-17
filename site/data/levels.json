@@ -5,7 +5,7 @@
     "normal": {
       "id": "normal", "severity": 0,
       "label": "Normal", "shortLabel": "Normal",
-      "color": "#1f9d6b", "ink": "#ffffff", "icon": "check",
+      "color": "#16845a", "ink": "#ffffff", "icon": "check",
       "headline": "El río está en su nivel habitual",
       "citizen": "No hay riesgo por el río en este momento.",
       "recommendations": [
@@ -60,6 +60,10 @@
     "rising":   { "label": "Se espera más crecida",       "citizen": "Se prevé que el río siga subiendo en las próximas horas." },
     "warning":  { "label": "Riesgo de alerta naranja",    "citizen": "Podría llegarse al nivel de alerta naranja pronto." },
     "critical": { "label": "Riesgo de nivel crítico",     "citizen": "Se prevé que el río podría llegar al nivel crítico (alerta roja) en las próximas horas." }
+  },
+  "ongoing": {
+    "warning":  "El nivel de alerta naranja ya fue alcanzado en el escenario. Seguí la evolución de las estaciones.",
+    "critical": "El nivel crítico ya fue alcanzado en el escenario. Seguí las recomendaciones y la evolución de las estaciones."
   },
   "disclaimer": "DEMOSTRACIÓN CONCEPTUAL. Todos los datos, estaciones, alertas y predicciones son sintéticos y simulados. No es un sistema de alerta real: ante una emergencia real, seguí a las autoridades locales."
 }

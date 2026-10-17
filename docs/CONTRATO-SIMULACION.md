@@ -70,7 +70,8 @@ snap = {
     outlook: {                          // PREDICCIÓN SIMULADA a ≤120 min
       simulated: true, key: 'calm'|'rising'|'warning'|'critical', label, message,
       preAlert: bool,                   // true = se anticipa un riesgo ANTES de que ocurra
-      severity, status, stationId, etaMin, confidence (0..1), confidenceLabel: 'baja'|'media'|'alta', windowMin
+      severity, status, stationId|null, etaMin|null, confidence|null (0..1), confidenceLabel: 'baja'|'media'|'alta'|null, windowMin,
+      ongoing: bool                      // true = el umbral ya se alcanzó; `message` deja de ser prospectivo
     }
   },
 
@@ -93,7 +94,7 @@ snap = {
 
   riverSegments: [{ id, from, to, stationIds, severity, status }],  // índices sobre data.map.river.path (slice(from,to+1))
   zones:  [{ id, name, kind, note, stationId, severity, status }],   // polígonos en data.map.zones[i].polygon
-  alerts: [{ id, kind:'level'|'forecast'|'device', stationId, severity, status|null, sinceT, title, detail }], // activas, más graves primero
+  alerts: [{ id, kind:'level'|'forecast'|'device', stationId, severity, status|null, sinceT (min en que empezó), title, detail }], // activas, más graves primero
   events: [{ id, t, clock, dayOffset, type:'level'|'forecast'|'device'|'weather'|'system'|'operator',
              stationId?, severity, status?, title, detail, simulated:true }]   // t ≤ ahora, el más nuevo primero
 }

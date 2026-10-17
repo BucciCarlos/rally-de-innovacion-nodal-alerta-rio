@@ -63,6 +63,8 @@ check('anticipación ≥ 60 min', redT - preCrit >= 60, `(${redT - preCrit} min)
 check('la predicción apunta a la estación que luego se pone roja', snaps[preCrit].system.outlook.stationId === snaps[redT].stations.find((s) => s.severity === 3).id);
 const e = snaps[preCrit].system.outlook.etaMin;
 check('ETA prevista coherente con el cruce real (±45 min)', Math.abs((preCrit + e) - redT) <= 45, `(pronóstico ${preCrit + e} vs real ${redT})`);
+check('tras el cruce crítico el mensaje deja de ser prospectivo', snaps[300].system.outlook.ongoing === true && /ya fue alcanzado/.test(snaps[300].system.outlook.message) && !snaps[preCrit].system.outlook.ongoing);
+check('toda alerta activa informa su hora de inicio (sinceT)', snaps.every((s) => s.alerts.every((a) => Number.isFinite(a.sinceT) && a.sinceT <= s.t)), JSON.stringify(snaps.flatMap((s) => s.alerts.filter((a) => !Number.isFinite(a.sinceT) || a.sinceT > s.t).map((a) => `${s.t}:${a.id}:${a.sinceT}`)).slice(0, 4)));
 check('sin alerta de predicción en el estado base', !snapshotAt(model, data.scenario.baselineT).system.outlook.preAlert);
 
 const fc = snaps[200].stations[3].forecast;

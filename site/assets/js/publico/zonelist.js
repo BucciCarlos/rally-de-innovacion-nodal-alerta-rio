@@ -50,7 +50,7 @@ export function createZoneList(root, sim, { onSelect, onShowOnMap }) {
         <div class="zd__ticks"><span style="left:${pos(st.thresholds.vigilancia)}">Atención</span><span style="left:${pos(st.thresholds.naranja)}">Naranja</span><span style="left:${pos(st.thresholds.roja)}">Roja</span></div>
       </div>
       <p class="zd__river">Río en ${escapeHtml(st.short)}: <strong>${fmtLevel(st.level)}</strong> · ${escapeHtml(TREND_SAY[st.trend])}${st.stale ? ' · <em>sin conexión, última lectura</em>' : ''}</p>
-      ${near ? `<div class="zd__safe">${icon('home', { size: 24 })}<p>Tu punto seguro más cercano:<br><strong>${escapeHtml(near.landmark.name.replace(/\s*—\s*punto seguro/i, ''))}</strong>, a unos ${fmtNumber(near.km, 1)} km en línea recta.</p>
+      ${near ? `<div class="zd__safe">${icon('home', { size: 24 })}<p>Punto seguro de ejemplo más cercano:<br><strong>${escapeHtml(near.landmark.name.replace(/\s*—\s*punto seguro/i, ''))}</strong>, a unos ${fmtNumber(near.km, 1)} km en línea recta.<br><small>Mapa y lugares ficticios: no es una indicación real de evacuación.</small></p>
         <button type="button" class="zd__map">Ver en el mapa</button></div>` : ''}
       <p class="zd__note">${escapeHtml(z.note)}</p>`);
     const btn = $('.zd__map', detail);

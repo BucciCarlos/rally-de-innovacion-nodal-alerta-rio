@@ -20,7 +20,7 @@
   --ar-muted: #52677b;
 
   /* Niveles de alerta (espejo de data/levels.json) */
-  --lvl-normal: #1f9d6b;
+  --lvl-normal: #16845a;
   --lvl-normal-ink: #ffffff;
   --lvl-vigilancia: #e8b400;
   --lvl-vigilancia-ink: #231a00;
@@ -30,7 +30,7 @@
   --lvl-roja-ink: #ffffff;
 
   /* Estados de dispositivo */
-  --dev-ok: #1f9d6b;
+  --dev-ok: #16845a;
   --dev-warn: #e8b400;
   --dev-fail: #d62839;
   --dev-off: #7d8b99;
