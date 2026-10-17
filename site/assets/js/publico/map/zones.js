@@ -12,6 +12,11 @@ export function createZones(map, data, levels, { onSelect }) {
   let snap = null;
   let selected = null;
 
+  // estaciones y puntos de referencia: las etiquetas de barrio se apartan de ellos
+  const stationPts = Object.values(data.map.river.stationPathIndex).map((i) => data.map.river.path[i]);
+  // también el hueco de la etiqueta de cada estación (debajo del marcador); y, a medida que se ubican, las demás etiquetas de barrio
+  const wide = (p) => [p, [p[0], p[1] - 0.018], [p[0], p[1] + 0.018]];   // el texto de la etiqueta es ancho: se evita también a los lados del marcador
+  const avoid = [...stationPts.flatMap(wide), ...stationPts.map((p) => [p[0] - 0.008, p[1]]), ...data.map.landmarks.flatMap((l) => wide(l.latlng))];
   const items = data.map.zones.map((z) => {
     const poly = L.polygon(z.polygon, { className: 'm-zone', weight: 2, interactive: true, bubblingMouseEvents: false }).addTo(map);
     const pat = L.polygon(z.polygon, { className: 'm-zone-pat', interactive: false, stroke: false }).addTo(map);
@@ -22,7 +27,9 @@ export function createZones(map, data, levels, { onSelect }) {
       return `<strong>${escapeHtml(z.name)}</strong><br>${escapeHtml(st.label)} — ${escapeHtml(ZONE_SAY[zs?.status ?? 'normal'])}`;
     }, { sticky: true, className: 'm-tip', direction: 'top' });
     poly.on('click', () => onSelect(z.id));
-    const label = L.marker(labelAnchor(z.polygon, data.map.river.path), {
+    const anchor = labelAnchor(z.polygon, data.map.river.path, avoid);
+    avoid.push(anchor, [anchor[0], anchor[1] - 0.02], [anchor[0], anchor[1] + 0.02]);
+    const label = L.marker(anchor, {
       interactive: false, keyboard: false,
       icon: L.divIcon({ className: 'zlabel-wrap', html: `<span class="zlabel">${escapeHtml(z.name)}</span>`, iconSize: [0, 0] })
     }).addTo(map);

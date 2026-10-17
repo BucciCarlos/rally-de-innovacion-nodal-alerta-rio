@@ -26,14 +26,22 @@ export function nearestShelter(landmarks, point) {
   return best;
 }
 
-/** Punto de un polígono más alejado del río (sirve para ubicar la etiqueta del barrio sin tapar las estaciones). */
-export function labelAnchor(poly, riverPath) {
+/**
+ * Ancla de la etiqueta de un barrio (sólo presentación): entre los vértices y puntos medios del polígono elige el más alejado de
+ * estaciones y puntos de referencia (`avoid`), evitando además quedar pegado al cauce. Sin `avoid` usa el punto más alejado del río.
+ */
+export function labelAnchor(poly, riverPath, avoid = []) {
+  const near = (pt, pts) => pts.reduce((m, r) => Math.min(m, Math.hypot(pt[0] - r[0], pt[1] - r[1])), Infinity);
+  const cands = [...poly];
+  for (let i = 0; i < poly.length; i++) { const a = poly[i], b = poly[(i + 1) % poly.length]; cands.push([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]); }
   const c = centroid(poly);
-  let best = c, bestD = -1;
-  for (const v of poly) {
-    let d = Infinity;
-    for (const r of riverPath) d = Math.min(d, (v[0] - r[0]) ** 2 + (v[1] - r[1]) ** 2);
-    if (d > bestD) { bestD = d; best = v; }
+  cands.push(c);
+  let best = c, bestScore = -Infinity;
+  for (const v of cands) {
+    const river = near(v, riverPath);
+    const score = (avoid.length ? near(v, avoid) : 0) + Math.min(river, 0.012) * 2 - (river < 0.005 ? 1 : 0);
+    if (score > bestScore) { bestScore = score; best = v; }
   }
-  return [c[0] + (best[0] - c[0]) * 1.15, c[1] + (best[1] - c[1]) * 1.15];
+  // un pequeño paso hacia el centro mantiene la etiqueta dentro del barrio
+  return [best[0] + (c[0] - best[0]) * 0.15, best[1] + (c[1] - best[1]) * 0.15];
 }

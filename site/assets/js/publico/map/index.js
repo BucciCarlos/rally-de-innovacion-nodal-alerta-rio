@@ -40,10 +40,20 @@ export function createRiverMap(el, sim, { onSelectZone, onSelectStation }) {
     ? { paddingTopLeft: [Math.min(500, window.innerWidth * 0.34) + 40, 40], paddingBottomRight: [70, 110] }
     : { paddingTopLeft: [28, 24], paddingBottomRight: [34, 36] });
 
+  // Marcadores compactos en la vista completa; crecen suavemente al acercar (hasta ≈ ×1,3) y recuperan detalle de etiquetas.
+  function markerScale() {
+    const z = map.getZoom();
+    const k = Math.min(1.3, Math.max(0.9, 1 + 0.2 * (z - baseZoom)));
+    map.getContainer().style.setProperty('--mk', k.toFixed(2));
+    map.getContainer().classList.toggle('is-overview', z < baseZoom + 0.6);
+  }
+  map.on('zoom', markerScale);
+
   function fit(animate = false) {
     map.fitBounds(focusBounds, { ...padding(), animate });
     baseZoom = map.getZoom();
     userMoved = false;
+    markerScale();
     api.onViewChange?.(false);
   }
 

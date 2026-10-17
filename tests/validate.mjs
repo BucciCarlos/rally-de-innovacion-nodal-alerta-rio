@@ -122,6 +122,22 @@ section('Escenografía cartográfica (capas visuales compartidas)');
   check('la capa de escenografía no importa módulos ni toca el simulador', !/^\s*import /m.test(rd('site/assets/js/core/scenery.js')));
 }
 
+
+/* ---------------------------------------------------------------- marcadores del mapa público */
+section('Marcadores del mapa público (compactos, con área de toque suficiente)');
+{
+  const css = rd('site/assets/css/publico.css');
+  const px = (re) => Number((re.exec(css) || [])[1]);
+  const shape = px(/\.stn__shape \{ display: block; width: (\d+)px/), hit = px(/\.stn \{[^}]*?width: (\d+)px/), mobile = px(/@media \(max-width: 639px\) \{[\s\S]*?\.stn \.stn__shape \{ width: (\d+)px/);
+  check(`icono de estación compacto (${shape}px, antes 46px: −${Math.round((1 - shape / 46) * 100)} %)`, shape >= 30 && shape <= 36);
+  check(`área de toque de la estación ≥ 44 px (${hit}px) aunque el icono sea menor`, hit >= 44);
+  check(`móvil: icono ${mobile}px con la misma área de toque`, mobile >= 28 && mobile < 38);
+  const lm = rd('site/assets/js/publico/map/landmarks.js');
+  const sizes = /size = safe \? (\d+) : (\d+)/.exec(lm), dia = /--d:\$\{safe \? (\d+) : (\d+)\}px/.exec(lm);
+  check('puntos de referencia: icono visual 30/22 px (antes 40/30) con área de toque ≥ 34 px', sizes && dia && Number(sizes[1]) >= 40 && Number(sizes[2]) >= 34 && Number(dia[1]) === 30 && Number(dia[2]) === 22);
+  check('marcadores escalan con el zoom (variable --mk) y los colores de nivel siguen siendo tokens', /--mk/.test(css) && /map\.on\('zoom'/.test(rd('site/assets/js/publico/map/index.js')) && !/#(1f9d6b|16845a|e8b400|ef7b12|d62839)/i.test(css));
+}
+
 /* ---------------------------------------------------------------- derivados: LoRa, sirenas, telemetría del nodo */
 section('Derivados (LoRa, sirenas) y telemetría del Modo Nodo');
 const sirenAt = (t, zone) => sirens(snaps[t], data.map).find((x) => x.zoneId === zone).state;
